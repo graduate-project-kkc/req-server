@@ -1,0 +1,17 @@
+name: "✨ Feature"
+description: "새로운 기능 추가"
+labels: ["feature"]
+body:
+  - type: textarea
+    attributes:
+      label: 📄 어떤 기능인가요?
+      placeholder: 추가하려는 기능에 대해 간결하게 설명해주세요
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: ✅ 작업 상세 내용
+      description: 할 일을 체크박스 형태로 작성해주세요.
+      placeholder: - [ ] TODO
+    validations:
+      required: true
