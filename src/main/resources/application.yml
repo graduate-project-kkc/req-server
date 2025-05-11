@@ -16,3 +16,6 @@ spring:
         region: ${BUCKET_REGION}
         bucket: ${BUCKET_NAME}
 
+# AI
+ai:
+  server-url: ${AI_SERVER_URL}
