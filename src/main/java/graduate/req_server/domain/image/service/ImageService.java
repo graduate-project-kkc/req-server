@@ -2,7 +2,7 @@ package graduate.req_server.domain.image.service;
 
 import graduate.req_server.domain.image.dto.request.ImageRequest;
 import graduate.req_server.domain.image.dto.response.ImageResponse;
-import graduate.req_server.util.ai.AiService;
+import graduate.req_server.util.client.AiClient;
 import graduate.req_server.util.file.MultipartUtils;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 public class ImageService {
 
     private final S3Client s3Client;
-    private final AiService aiService;
+    private final AiClient aiClient;
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
@@ -51,7 +51,7 @@ public class ImageService {
         }).collect(Collectors.toList());
 
         // AI 처리
-        String status = aiService.process(ids);
+        String status = aiClient.vectorizeAndStore(ids);
         return new ImageResponse(ids, status);
     }
 }
