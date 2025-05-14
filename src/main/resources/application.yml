@@ -18,4 +18,12 @@ spring:
 
 # AI
 ai:
-  server-url: ${AI_SERVER_URL}
+  server:
+    base-url: ${AI_SERVER_URL}
+    image-to-vector-endpoint: ${ITV_ENDPOINT}
+    text-to-vector-endpoint: ${TTV_ENDPOINT}
+
+#TODO pinecone conn
+vector-db:
+  url: ${VECTOR_URL}
+  top-k: ${TOP_K}
