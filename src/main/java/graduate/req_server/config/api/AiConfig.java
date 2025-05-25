@@ -6,25 +6,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-public class ApiConfig {
+public class AiConfig {
 
     @Value("${ai.server.base-url}")
     private String aiUrl;
-
-    @Value("${vector-db.url}")
-    private String vectorDbUrl;
 
     @Bean(name = "aiWebClient")
     public WebClient aiWebClient() {
         return WebClient.builder()
                 .baseUrl(aiUrl)
-                .build();
-    }
-
-    @Bean(name = "vectorDbWebClient")
-    public WebClient vectorDbWebClient() {
-        return WebClient.builder()
-                .baseUrl(vectorDbUrl)
                 .build();
     }
 }

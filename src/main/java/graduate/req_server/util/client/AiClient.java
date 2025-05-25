@@ -25,12 +25,12 @@ public class AiClient {
                 .block();
     }
 
-    public List<Double> textToVector(String text) {
+    public List<Float> textToVector(String text) {
         return aiWebClient.post()
                 .uri(textToVectorPath)
                 .bodyValue(text)
                 .retrieve()
-                .bodyToFlux(Double.class)
+                .bodyToFlux(Float.class)
                 .collectList()
                 .block();
     }

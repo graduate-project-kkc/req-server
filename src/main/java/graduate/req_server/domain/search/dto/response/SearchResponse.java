@@ -6,5 +6,5 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SearchResponse {
 
-    List<String> imageUrls;
+    private List<String> imageUrls;
 }
