@@ -82,7 +82,7 @@ async function performSearch() {
     }
 
     // Find matching results
-    const results = await apiGet('/api/search');
+    const results = await apiGet('/api/search?query='+query);
 
 
     // Display results

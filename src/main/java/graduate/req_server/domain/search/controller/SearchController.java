@@ -18,7 +18,7 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping
-    public ResponseEntity<SearchResponse> search(@RequestParam String s) {
-        return ResponseEntity.ok(searchService.searchByText(new SearchRequest(s)));
+    public ResponseEntity<SearchResponse> search(@RequestParam String query) {
+        return ResponseEntity.ok(searchService.searchByText(new SearchRequest(query)));
     }
 }
