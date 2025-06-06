@@ -26,9 +26,12 @@ public class AiClient {
     }
 
     public List<Float> textToVector(String text) {
-        return aiWebClient.post()
-                .uri(textToVectorPath)
-                .bodyValue(text)
+        return aiWebClient.get()
+                .uri(uriBuilder ->
+                        uriBuilder
+                                .path(textToVectorPath)
+                                .queryParam("text", text)
+                                .build())
                 .retrieve()
                 .bodyToFlux(Float.class)
                 .collectList()

@@ -4,7 +4,6 @@ import graduate.req_server.domain.image.dto.request.ImageRequest;
 import graduate.req_server.domain.image.dto.response.ImageResponse;
 import graduate.req_server.util.client.AiClient;
 import graduate.req_server.util.file.MultipartUtils;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -27,7 +26,6 @@ public class ImageService {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Transactional
     public ImageResponse uploadAndProcess(ImageRequest request) {
         List<MultipartFile> files = request.getFiles();
         MultipartUtils.validateFiles(files);

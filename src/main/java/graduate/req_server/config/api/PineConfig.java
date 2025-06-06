@@ -16,7 +16,7 @@ public class PineConfig {
 
     //Control Plane HTTP client 생성
     @Bean
-    public Pinecone pineconeClient() {
+    public Pinecone pinecone() {
         return new Pinecone.Builder(apiKey)
                 .build();
     }
