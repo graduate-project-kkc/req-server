@@ -66,7 +66,7 @@ async function handleFiles(files) {
 
         }
 
-        return await apiPost("/upload", formData);
+        return await apiPost("/api/images", formData);
     }
 }
 
@@ -82,7 +82,7 @@ async function performSearch() {
     }
 
     // Find matching results
-    const results = await apiGet('/search');
+    const results = await apiGet('/api/search');
 
 
     // Display results
@@ -117,10 +117,10 @@ async function performSearch() {
 async function loadPhotoStats() {
     try {
 
-        const stats = await apiGet('/status'); // { photoCount: 1247, totalSize: "2.4GB" }
+        const stats = await apiGet('/api/status'); // { photoCount: 1247, totalSize: "2.4GB" }
         
-        document.getElementById('photoCount').textContent = stats.photoCount.toLocaleString();
-        document.getElementById('totalSize').textContent = stats.totalSize;
+        document.getElementById('photoCount').textContent = stats.fileCount.toLocaleString();
+        document.getElementById('totalSize').textContent = stats.fileSize;
     } catch (error) {
         console.error("사진 통계 오류:", error);
         document.getElementById('photoCount').textContent = "N/A";
