@@ -1,5 +1,6 @@
 package graduate.req_server.util.client.ai;
 
+import graduate.req_server.util.client.ai.dto.UploadResponse;
 import graduate.req_server.util.client.ai.dto.VectorResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +18,12 @@ public class AiClient {
     @Value("${ai.server.text-to-vector-endpoint}")
     private String textToVectorPath;
 
-    public String vectorizeAndStore(List<String> imageIds) {
+    public UploadResponse vectorizeAndStore(List<String> imageIds) {
         return aiWebClient.post()
                 .uri(imageToVectorPath)
                 .bodyValue(imageIds)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(UploadResponse.class)
                 .block();
     }
 
