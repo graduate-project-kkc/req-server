@@ -21,16 +21,9 @@ public class PineconeClient {
 
     public List<String> queryTopK(List<Float> vector) {
 
-        QueryResponseWithUnsignedIndices response = pineconeIndex.query(
+        QueryResponseWithUnsignedIndices response = pineconeIndex.queryByVector(
                 topK,
-                vector,
-                Collections.emptyList(),
-                Collections.emptyList(),
-                null,
-                "",
-                null,
-                false,
-                false
+                vector
         );
         if(response==null || response.getMatchesList().isEmpty()) {
             return Collections.emptyList();
