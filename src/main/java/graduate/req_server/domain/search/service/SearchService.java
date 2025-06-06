@@ -2,7 +2,7 @@ package graduate.req_server.domain.search.service;
 
 import graduate.req_server.domain.search.dto.request.SearchRequest;
 import graduate.req_server.domain.search.dto.response.SearchResponse;
-import graduate.req_server.util.client.AiClient;
+import graduate.req_server.util.client.ai.AiClient;
 import graduate.req_server.util.client.PineconeClient;
 import java.util.List;
 import java.util.stream.Collectors;

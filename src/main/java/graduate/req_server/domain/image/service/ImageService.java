@@ -2,7 +2,7 @@ package graduate.req_server.domain.image.service;
 
 import graduate.req_server.domain.image.dto.request.ImageRequest;
 import graduate.req_server.domain.image.dto.response.ImageResponse;
-import graduate.req_server.util.client.AiClient;
+import graduate.req_server.util.client.ai.AiClient;
 import graduate.req_server.util.file.MultipartUtils;
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,5 +1,6 @@
-package graduate.req_server.util.client;
+package graduate.req_server.util.client.ai;
 
+import graduate.req_server.util.client.ai.dto.VectorResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,15 +27,20 @@ public class AiClient {
     }
 
     public List<Float> textToVector(String text) {
-        return aiWebClient.get()
+        VectorResponse response = aiWebClient.get()
                 .uri(uriBuilder ->
                         uriBuilder
                                 .path(textToVectorPath)
-                                .queryParam("text", text)
+                                .queryParam("query", text)
                                 .build())
                 .retrieve()
-                .bodyToFlux(Float.class)
-                .collectList()
+                .bodyToMono(VectorResponse.class)
                 .block();
+
+        if (response == null || response.getVector() == null) {
+            return List.of();
+        }
+
+        return response.getVector();
     }
 }
