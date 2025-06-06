@@ -57,13 +57,13 @@ function handleFileSelect(e) {
 
 async function handleFiles(files) {
     if (files.length > 0) {
-        alert(`${files.length}개의 파일이 선택되었습니다. 실제 서비스에서는 서버로 업로드됩니다.`);
+        //alert(`${files.length}개의 파일이 선택되었습니다. 실제 서비스에서는 서버로 업로드됩니다.`);
         // 실제 구현에서는 여기서 FormData를 사용해 multipart/form-data로 서버에 전송
         const formData = new FormData();
 
         for (let i =0; i < files.length; i++){
-            formData.append("files, files[i]"); // files가 key
-
+            console.log(files[i])
+            formData.append("files", files[i]); // files가 key
         }
 
         return await apiPost("/api/images", formData);

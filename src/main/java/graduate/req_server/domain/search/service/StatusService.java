@@ -36,16 +36,17 @@ public class StatusService {
         long totalSize = 0L;
         int fileCount = 0;
         String continuationToken = null;
-        ListObjectsV2Request request = ListObjectsV2Request.builder()
-                .bucket(bucket)
-                .prefix(prefix+"/")
-                .build();
 
         ListObjectsV2Response result;
-        result = s3Client.listObjectsV2(request);
-
         do {
+            ListObjectsV2Request request = ListObjectsV2Request.builder()
+                    .bucket(bucket)
+                    .prefix(prefix+"/")
+                    .continuationToken(continuationToken)
+                    .build();
 
+
+            result = s3Client.listObjectsV2(request);
             List<S3Object> contents = result.contents();
             for (S3Object object : contents) {
                 if(object.key().endsWith("/")) {
