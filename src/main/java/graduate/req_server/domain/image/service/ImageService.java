@@ -3,6 +3,7 @@ package graduate.req_server.domain.image.service;
 import graduate.req_server.domain.image.dto.request.ImageRequest;
 import graduate.req_server.domain.image.dto.response.ImageResponse;
 import graduate.req_server.util.client.ai.AiClient;
+import graduate.req_server.util.client.ai.dto.UploadResponse;
 import graduate.req_server.util.file.MultipartUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +27,7 @@ public class ImageService {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
-    public ImageResponse uploadAndProcess(ImageRequest request) {
+    public UploadResponse uploadAndProcess(ImageRequest request) {
         List<MultipartFile> files = request.getFiles();
         MultipartUtils.validateFiles(files);
 
@@ -45,11 +46,10 @@ public class ImageService {
             } catch (IOException e) {
                 //TODO Error
             }
-            return id;
+            return id + ext;
         }).collect(Collectors.toList());
 
         // AI 처리
-        String status = aiClient.vectorizeAndStore(ids);
-        return new ImageResponse(ids, status);
+        return aiClient.vectorizeAndStore(ids);
     }
 }
