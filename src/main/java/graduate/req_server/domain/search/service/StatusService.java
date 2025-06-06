@@ -1,11 +1,6 @@
 package graduate.req_server.domain.search.service;
 
-import graduate.req_server.domain.search.controller.StatusController;
-import graduate.req_server.domain.search.dto.request.SearchRequest;
-import graduate.req_server.domain.search.dto.response.SearchResponse;
 import graduate.req_server.domain.search.dto.response.StatusResponse;
-import graduate.req_server.util.client.AiClient;
-import graduate.req_server.util.client.PineconeClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +11,6 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
