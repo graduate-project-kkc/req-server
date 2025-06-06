@@ -17,10 +17,10 @@ public class SearchService {
     private final AiClient aiClient;
     private final PineconeClient pineconeClient;
 
-    @Value("${aws.s3.bucket}")
+    @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${aws.s3.region}")
+    @Value("${spring.cloud.aws.s3.region}")
     private String region;
 
     public SearchResponse searchByText(SearchRequest request) {
