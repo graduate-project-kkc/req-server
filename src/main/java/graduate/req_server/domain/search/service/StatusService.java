@@ -1,11 +1,6 @@
 package graduate.req_server.domain.search.service;
 
-import graduate.req_server.domain.search.controller.StatusController;
-import graduate.req_server.domain.search.dto.request.SearchRequest;
-import graduate.req_server.domain.search.dto.response.SearchResponse;
 import graduate.req_server.domain.search.dto.response.StatusResponse;
-import graduate.req_server.util.client.AiClient;
-import graduate.req_server.util.client.PineconeClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +11,6 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,16 +30,17 @@ public class StatusService {
         long totalSize = 0L;
         int fileCount = 0;
         String continuationToken = null;
-        ListObjectsV2Request request = ListObjectsV2Request.builder()
-                .bucket(bucket)
-                .prefix(prefix+"/")
-                .build();
 
         ListObjectsV2Response result;
-        result = s3Client.listObjectsV2(request);
-
         do {
+            ListObjectsV2Request request = ListObjectsV2Request.builder()
+                    .bucket(bucket)
+                    .prefix(prefix+"/")
+                    .continuationToken(continuationToken)
+                    .build();
 
+
+            result = s3Client.listObjectsV2(request);
             List<S3Object> contents = result.contents();
             for (S3Object object : contents) {
                 if(object.key().endsWith("/")) {

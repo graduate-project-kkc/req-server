@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "http://54.180.144.51:8080";
 
 // 공통 fetch wrapper
 async function apiGet(endpoint) {
@@ -12,11 +12,12 @@ async function apiGet(endpoint) {
 async function apiPost(endpoint, data) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        //headers: { 'Content-Type': 'application/json' },
+        body: data//JSON.stringify(data)
     });
     if (!response.ok) {
         throw new Error(`POST ${endpoint} 실패`);
     }
     return await response.json();
 }
+
