@@ -15,6 +15,10 @@ spring:
       s3:
         region: ${BUCKET_REGION}
         bucket: ${BUCKET_NAME}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
 
 # AI
 ai:
