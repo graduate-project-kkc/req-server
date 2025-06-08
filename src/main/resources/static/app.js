@@ -86,14 +86,14 @@ async function performSearch() {
     console.log(results)
     console.log(JSON.stringify(results))
     // Display results
-    if (results.imageUrls.length > 0) {
-        const photosHtml = results.imageUrls.map(imageUrl => `
+    if (results.photos.length > 0) {
+        const photosHtml = results.photos.map(photos => `
             <div class="photo-card">
-                <img class="photo-img" src=${imageUrl} alt="photo">
+                <img class="photo-img" src=${photos.url} alt="photo">
                 <div class="photo-info">
-                    <div class="photo-title">-</div> 
-                    <div class="photo-meta">-</div> 
-                    <div class="photo-meta">-</div>
+                    <div class="photo-title">${photos.url.split("/").pop()}</div> 
+                    <div class="photo-meta">socre: ${photos.score.toFixed(3)}</div> 
+                    <div class="photo-meta">size: ${photos.size}MB</div>
                 </div>
             </div>
         `).join('');
