@@ -1,4 +1,4 @@
-package graduate.req_server.util.client;
+package graduate.req_server.util.client.pinecone;
 
 import io.pinecone.clients.Index;
 import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
