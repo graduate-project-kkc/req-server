@@ -83,17 +83,17 @@ async function performSearch() {
 
     // Find matching results
     const results = await apiGet('/api/search?query='+query);
-
-
+    console.log(results)
+    console.log(JSON.stringify(results))
     // Display results
-    if (results.length > 0) {
-        const photosHtml = results.map(photo => `
+    if (results.imageUrls.length > 0) {
+        const photosHtml = results.imageUrls.map(imageUrl => `
             <div class="photo-card">
-                <div class="photo-img">${photo.emoji}</div>
+                <img class="photo-img" src=${imageUrl} alt="photo">
                 <div class="photo-info">
-                    <div class="photo-title">${photo.title}</div>
-                    <div class="photo-meta">크기: ${photo.size}</div>
-                    <div class="photo-meta">업로드: ${photo.date}</div>
+                    <div class="photo-title">-</div> 
+                    <div class="photo-meta">-</div> 
+                    <div class="photo-meta">-</div>
                 </div>
             </div>
         `).join('');
