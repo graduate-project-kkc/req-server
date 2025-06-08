@@ -20,6 +20,6 @@ public class StatusController {
     @GetMapping
     public ResponseEntity<StatusResponse> search() {
         log.debug("[StatusController] search");
-        return ResponseEntity.ok(statusService.getStats("images"));
+        return ResponseEntity.ok(statusService.getStats(""));
     }
 }

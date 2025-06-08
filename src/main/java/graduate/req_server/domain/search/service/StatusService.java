@@ -33,7 +33,7 @@ public class StatusService {
         do {
             ListObjectsV2Request request = ListObjectsV2Request.builder()
                     .bucket(bucket)
-                    .prefix(prefix+"/")
+                    //.prefix(prefix+"/")
                     .continuationToken(continuationToken)
                     .build();
 
