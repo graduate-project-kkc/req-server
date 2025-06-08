@@ -5,7 +5,7 @@ import io.pinecone.unsigned_indices_model.QueryResponseWithUnsignedIndices;
 import io.pinecone.unsigned_indices_model.ScoredVectorWithUnsignedIndices;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,12 +28,9 @@ public class PineconeClient {
                 topK,
                 vector
         );
-        if(response==null || response.getMatchesList().isEmpty()) {
-            return Collections.emptyList();
-        }
 
-        return response.getMatchesList().stream()
-                .map(ScoredVectorWithUnsignedIndices::getId)
-                .collect(Collectors.toList());
+        return Optional.ofNullable(response)
+                .map(QueryResponseWithUnsignedIndices::getMatchesList)
+                .orElse(Collections.emptyList());
     }
 }
