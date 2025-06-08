@@ -7,9 +7,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PineconeClient {
@@ -19,7 +21,8 @@ public class PineconeClient {
     @Value("${pinecone.top-k}")
     private int topK;
 
-    public List<String> queryTopK(List<Float> vector) {
+    public List<ScoredVectorWithUnsignedIndices> queryTopKWithScore(List<Float> vector) {
+        log.debug("[PineconeClient] queryTopKWithScore");
 
         QueryResponseWithUnsignedIndices response = pineconeIndex.queryByVector(
                 topK,

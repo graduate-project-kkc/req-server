@@ -1,7 +1,6 @@
 package graduate.req_server.domain.image.service;
 
 import graduate.req_server.domain.image.dto.request.ImageRequest;
-import graduate.req_server.domain.image.dto.response.ImageResponse;
 import graduate.req_server.util.client.ai.AiClient;
 import graduate.req_server.util.client.ai.dto.UploadResponse;
 import graduate.req_server.util.file.MultipartUtils;
@@ -10,6 +9,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +17,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ImageService {
@@ -28,6 +29,8 @@ public class ImageService {
     private String bucket;
 
     public UploadResponse uploadAndProcess(ImageRequest request) {
+        log.debug("[ImageService] uploadAndProcess");
+
         List<MultipartFile> files = request.getFiles();
         MultipartUtils.validateFiles(files);
 

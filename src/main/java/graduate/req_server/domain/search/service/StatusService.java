@@ -20,13 +20,11 @@ public class StatusService {
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
-
-    @Value("${spring.cloud.aws.s3.region}")
-    private String region;
     private final S3Client s3Client;
 
 
     public StatusResponse getStats(String prefix) {
+        log.debug("[StatusService] getStats");
         long totalSize = 0L;
         int fileCount = 0;
         String continuationToken = null;
