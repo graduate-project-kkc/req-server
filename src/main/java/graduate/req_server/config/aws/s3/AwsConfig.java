@@ -1,4 +1,4 @@
-package graduate.req_server.config.aws;
+package graduate.req_server.config.aws.s3;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +8,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Utilities;
 
 @Configuration
 public class AwsConfig {
@@ -47,5 +48,10 @@ public class AwsConfig {
                 .region(Region.of(region))
                 .credentialsProvider(customAwsCredentialsProvider())
                 .build();
+    }
+
+    @Bean
+    public S3Utilities s3Utilities(S3Client s3Client) {
+        return s3Client.utilities();
     }
 }

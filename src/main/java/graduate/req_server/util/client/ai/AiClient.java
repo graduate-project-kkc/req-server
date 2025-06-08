@@ -4,10 +4,12 @@ import graduate.req_server.util.client.ai.dto.UploadResponse;
 import graduate.req_server.util.client.ai.dto.VectorResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AiClient {
@@ -19,6 +21,8 @@ public class AiClient {
     private String textToVectorPath;
 
     public UploadResponse vectorizeAndStore(List<String> imageIds) {
+        log.debug("[AiClient] vectorizeAndStore");
+
         return aiWebClient.post()
                 .uri(imageToVectorPath)
                 .bodyValue(imageIds)
@@ -28,6 +32,8 @@ public class AiClient {
     }
 
     public List<Float> textToVector(String text) {
+        log.debug("[AiClient] textToVector");
+
         VectorResponse response = aiWebClient.get()
                 .uri(uriBuilder ->
                         uriBuilder

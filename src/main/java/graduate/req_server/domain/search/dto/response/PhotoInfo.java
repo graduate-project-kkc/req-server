@@ -1,12 +1,13 @@
 package graduate.req_server.domain.search.dto.response;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class SearchResponse {
+public class PhotoInfo {
 
-    private List<PhotoInfo> photos;
+    private String url;
+    private double size;
+    private double score;
 }
