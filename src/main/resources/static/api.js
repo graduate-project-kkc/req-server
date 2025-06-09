@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://54.180.144.51:8080";
+const API_BASE_URL = "http://52.79.227.178:8080";
 
 // 공통 fetch wrapper
 async function apiGet(endpoint) {
