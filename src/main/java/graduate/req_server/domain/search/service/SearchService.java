@@ -24,7 +24,7 @@ public class SearchService {
     public SearchResponse searchByText(SearchRequest request) {
         log.debug("[SearchService] searchByText");
 
-        double minScore = 0.0012;
+        double minScore = 0.1;
 
         List<Float> vector = aiClient.textToVector(request.getQuery());
         List<ScoredVectorWithUnsignedIndices> matches = pineconeClient.queryTopKWithScore(vector);
