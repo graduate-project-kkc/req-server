@@ -39,7 +39,10 @@ dependencies {
 	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.1")
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
 
-	//Pinecone
+	// Translate
+	implementation 'software.amazon.awssdk:translate'
+
+	// Pinecone
 	implementation 'io.pinecone:pinecone-client:5.0.0'
 	//Pinecone 클라이언트가 의존하는 라이브러리의 특정 버전에 취약점이 있어 해당 라이브러리 버전업
 	implementation 'com.google.protobuf:protobuf-java:4.31.0'
