@@ -24,8 +24,8 @@ repositories {
 }
 
 dependencies {
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -35,14 +35,28 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	//S3
+	// S3
 	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.1")
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
 
-	//Pinecone
+	// Pinecone
 	implementation 'io.pinecone:pinecone-client:5.0.0'
 	//Pinecone 클라이언트가 의존하는 라이브러리의 특정 버전에 취약점이 있어 해당 라이브러리 버전업
 	implementation 'com.google.protobuf:protobuf-java:4.31.0'
+
+	// TSID
+	implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.9.4")
+
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// JWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+	// Email
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('test') {
