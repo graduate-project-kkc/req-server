@@ -22,11 +22,21 @@ public class PineconeClient {
     private int topK;
 
     public List<ScoredVectorWithUnsignedIndices> queryTopKWithScore(List<Float> vector) {
-        log.debug("[PineconeClient] queryTopKWithScore");
-
         QueryResponseWithUnsignedIndices response = pineconeIndex.queryByVector(
                 topK,
                 vector
+        );
+
+        return Optional.ofNullable(response)
+                .map(QueryResponseWithUnsignedIndices::getMatchesList)
+                .orElse(Collections.emptyList());
+    }
+
+    public List<ScoredVectorWithUnsignedIndices> queryTopKWithUserId(List<Float> vector, String userId) {
+        QueryResponseWithUnsignedIndices response = pineconeIndex.queryByVector(
+                topK,
+                vector,
+                userId
         );
 
         return Optional.ofNullable(response)

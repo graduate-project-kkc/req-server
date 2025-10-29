@@ -1,20 +1,17 @@
 package graduate.req_server.util.file;
 
+import graduate.req_server.common.exception.CustomException;
+import graduate.req_server.common.exception.ErrorCode;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 public class MultipartUtils {
 
-    public static void validateFiles(List<MultipartFile> files) {
-        if (files == null || files.isEmpty()) {
-            //TODO Error
-        }
-    }
+    private MultipartUtils() {}
 
-    public static String getExtension(String filename) {
-        if (filename == null || !filename.contains(".")) {
-            return "";
+    public static void validateFiles(List<MultipartFile> files) {
+        if (files == null || files.isEmpty() || files.stream().anyMatch(MultipartFile::isEmpty)) {
+            throw new CustomException(ErrorCode.EMPTY_FILE);
         }
-        return filename.substring(filename.lastIndexOf('.'));
     }
 }

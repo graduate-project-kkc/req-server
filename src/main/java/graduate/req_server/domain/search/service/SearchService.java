@@ -6,6 +6,7 @@ import graduate.req_server.domain.search.dto.response.SearchResponse;
 import graduate.req_server.util.client.ai.AiClient;
 import graduate.req_server.util.client.pinecone.PineconeClient;
 import graduate.req_server.util.client.s3.S3Service;
+import graduate.req_server.util.security.SecurityUtil;
 import io.pinecone.unsigned_indices_model.ScoredVectorWithUnsignedIndices;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,10 @@ public class SearchService {
 
         double minScore = 0.1;
 
+        String userId = SecurityUtil.getCurrentUserId();
+
         List<Float> vector = aiClient.textToVector(request.getQuery());
-        List<ScoredVectorWithUnsignedIndices> matches = pineconeClient.queryTopKWithScore(vector);
+        List<ScoredVectorWithUnsignedIndices> matches = pineconeClient.queryTopKWithUserId(vector, userId);
 
         List<PhotoInfo> photos = matches.stream()
                 .filter(m -> m.getScore() >= minScore)
