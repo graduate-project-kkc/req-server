@@ -129,7 +129,40 @@
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="modal-btn secondary" onclick="closeLoginModal()">취소</button>
+                    <button type="button" class="modal-btn secondary" onclick="openSignUpModal()">회원가입</button>
                     <button type="button" class="modal-btn primary" onclick="handleLogin()">로그인</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sign-up Modal -->
+    <div id="signUpModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">회원가입</h3>
+            <form>
+                <div class="form-group">
+                    <label class="form-label">이메일</label>
+                    <input id="emailInput" type="email" class="form-input" placeholder="이메일을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">비밀번호</label>
+                    <input id="pwdInput" type="password" class="form-input" placeholder="비밀번호를 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">비밀번호 확인</label>
+                    <input id="pwdConfirmInput" type="password" class="form-input" placeholder="위와 동일한 비밀번호를 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">인증번호</label>
+                    <input id="sendCodeBtn" type="button" class="modal-btn" onclick="sendEmailVerification()" value="인증번호 요청">
+                    <input hidden id="codeInput" type="text" class="form-input" placeholder="인증번호를 입력하세요">
+                    <input hidden id="checkCodeBtn" type="button" class="modal-btn" onclick="checkEmailVerification()" value="인증번호 확인">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn secondary" onclick="closeSignUpModal()">취소</button>
+                    <button type="button" class="modal-btn secondary" onclick="openLoginModal()">로그인</button>
+                    <button id="signUpBtn" type="submit" class="modal-btn primary" onclick="handleSignUp()">회원가입</button>
                 </div>
             </form>
         </div>
