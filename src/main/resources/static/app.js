@@ -127,8 +127,9 @@ async function loadPhotoStats() {
     }
 }
 
-// TODO: form data를 submit 없이 불러오기
-// 또는 form의 각 element에 ID 붙여서 하나씩 불러오기
+// TODO
+// - 로그인/회원가입 시 return값 이용
+//   - 로그인 후 세션 관리?
 
 // Login modal
 function openLoginModal() {
@@ -141,22 +142,21 @@ function closeLoginModal() {
     document.getElementById("loginModal").classList.remove("active");
 }
 
+function getLoginFormData() {
+    return new FormData(document.getElementById("loginModal").querySelector("form"));
+}
+
 function handleLogin(e) {
-    console.log("handleLogin");
-    let formElement = document.querySelector("#loginModal > div > form");
-    let formData = new FormData(formElement);
-    for (const pair of formData.entries()) {
-        console.log(pair[0] + ", " + pair[1]);
-    } // TODO
+    const result = apiPost("/api/users/login", getLoginFormData());
+    console.log(result)  // TODO
     closeLoginModal();
 }
 
 function updateLoginButtonState(e) {
     // Login modal : Enable login button only when the user filled both input boxes
-    let loginBtn = document.querySelector("#loginModal > div > form > div.modal-buttons > button:nth-child(3)");
+    let loginBtn = document.getElementById("loginBtn");
     if (
-        document.querySelector("#loginModal > div > form > div:nth-child(1) > input").value.trim().length > 0 &&
-        document.querySelector("#loginModal > div > form > div:nth-child(2) > input").value.trim().length > 0
+        getLoginFormData().values().every(value => value.trim().length > 0)
     ) {
         loginBtn.disabled = false;
         loginBtn.classList.add("primary");
@@ -166,18 +166,14 @@ function updateLoginButtonState(e) {
     }
 }
 
-document
-    .querySelector("#loginModal > div > form > div:nth-child(1) > input")
-    .addEventListener("input", updateLoginButtonState);
-document
-    .querySelector("#loginModal > div > form > div:nth-child(2) > input")
-    .addEventListener("input", updateLoginButtonState);
+document.getElementById("loginModal").querySelectorAll("input").forEach(element => 
+    element.addEventListener("input", updateLoginButtonState)
+);
 
 // Sign-up modal
 function openSignUpModal() {
     document.getElementById("loginModal").classList.remove("active");
     document.getElementById("signUpModal").classList.add("active");
-    document.getElementById("signUpModal").comfirmed = false;
     updateSignUpButtonState();
 }
 
@@ -185,18 +181,20 @@ function closeSignUpModal() {
     document.getElementById("signUpModal").classList.remove("active");
 }
 
+function getSignUpFormData() {
+    return new FormData(document.getElementById("signUpModal").querySelector("form"));
+}
+
 function updateSignUpButtonState(e) {
     // Sign-up modal : If the input password is not confirmed, deactivate the sign-up-related buttons
     let confirmed =
-        document.getElementById("pwdInput").value.trim().length > 0 &&
+        getSignUpFormData().entries().every(pair => pair[0] == "verificationCode" || pair[1].trim().length > 0) &&
         document.getElementById("pwdInput").value == document.getElementById("pwdConfirmInput").value;
-    let sendCodeButton = document.getElementById("sendCodeBtn");
+        
     let signUpButton = document.getElementById("signUpBtn");
-    let signUpModal = document.getElementById("signUpModal");
-
-    signUpModal.comfirmed = confirmed;
-    sendCodeButton.disabled = !confirmed;
-    if (confirmed && signUpModal.emailVerified) {
+        
+    document.getElementById("sendCodeBtn").disabled = (!confirmed || document.getElementById("signUpModal").emailSent);
+    if (confirmed) {
         signUpButton.disabled = false;
         signUpButton.classList.add("primary");
     } else {
@@ -205,64 +203,40 @@ function updateSignUpButtonState(e) {
     }
 }
 
-document.getElementById("pwdInput").addEventListener("input", updateSignUpButtonState);
-document.getElementById("pwdConfirmInput").addEventListener("input", updateSignUpButtonState);
+document.getElementById("signUpModal").querySelectorAll("input").forEach(element => 
+    {if (!element.hidden) {element.addEventListener("input", updateSignUpButtonState);}}
+);
 
 function sendEmailVerification() {
-    if (document.getElementById("emailInput").value.trim().length <= 0) {
-        // Display error that the user didn't input their any email
-        return;
-    }
-
     let signUpModal = document.getElementById("signUpModal");
     let sendCodeButton = document.getElementById("sendCodeBtn");
-    sendCodeButton.value = "전송 중...";
+    sendCodeButton.innerHTML = "전송 중...";
     sendCodeButton.disabled = true;
 
-    // let result = apiPost("/api/users/email-verification", signUpModal.formData); // TODO: to be tested
-    // console.log(result);
+    const result = apiPost("/api/users/email-verification", getSignUpFormData()); // TODO: to be tested
+    console.log(result);
 
     // Wait 5 minutes (EMAIL_VERIFICATION_EXPIRY_MINUTES) for next sending verification code
     signUpModal.emailSent = true;
     let countdownVar = 300;
     function countdownFunc() {
         if (countdownVar-- > 0) {
-            sendCodeButton.value = countdownVar + "s";
+            sendCodeButton.innerHTML = countdownVar + "s";
             setTimeout(countdownFunc, 1000);
         } else {
             signUpModal.emailSent = false;
             updateButtonState();
-            sendCodeButton.value = "인증번호 다시 요청";
+            sendCodeButton.innerHTML = "인증번호 다시 요청";
         }
     }
     countdownFunc();
 
     document.getElementById("codeInput").hidden = false;
-    document.getElementById("checkCodeBtn").hidden = false;
-}
-
-function checkEmailVerification() {
-    let signUpModal = document.getElementById("signUpModal");
-    let inputCode = document.getElementById("codeInput").value;
-    let checkCodeBtn = document.getElementById("checkCodeBtn");
-
-    let code = ""; // The generated code at sending function
-
-    if (inputCode == code) {
-        document.getElementById("sendCodeBtn").hidden = true;
-        document.getElementById("codeInput").hidden = true;
-        checkCodeBtn.disabled = true;
-        checkCodeBtn.value = "인증 완료";
-        signUpModal.emailVerified = true;
-        updateButtonState();
-    }
 }
 
 function handleSignUp() {
-    let result = apiPost(
-        "/api/users/signup",
-        document.getElementById("signUpModal").formData // TODO
-    );
+    const result = apiPost("/api/users/signup", getSignUpFormData());
+    console.log(result);  // TODO
     closeSignUpModal();
 }
 
