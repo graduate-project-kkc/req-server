@@ -148,7 +148,7 @@ function getLoginFormData() {
 
 function handleLogin(e) {
     const result = apiPost("/api/users/login", getLoginFormData());
-    console.log(result)  // TODO
+    localStorage.setItem('token', result.token);
     closeLoginModal();
 }
 
