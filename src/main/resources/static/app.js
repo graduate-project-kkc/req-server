@@ -61,7 +61,12 @@ async function handleFiles(files) {
         const formData = new FormData();
 
         for (let i =0; i < files.length; i++){
-            console.log(files[i])
+            if (files[i].fileSize > (13 << 19)) {
+                // The image is too big (>= 7.5MB)
+                continue;
+            }
+
+            console.log(files[i]);
             formData.append("files", files[i]); // files가 key
         }
 
@@ -84,6 +89,10 @@ async function performSearch() {
     const results = await apiGet('/api/search?query='+query);
     console.log(results)
     console.log(JSON.stringify(results))
+
+    // TODO : Get the translated text of query
+    // and display it to the user
+
     // Display results
     if (results.photos.length > 0) {
         const photosHtml = results.photos.map(photos => `
@@ -99,7 +108,7 @@ async function performSearch() {
 
         resultsContainer.innerHTML = `
             <div style="margin-bottom: 1rem; color: #64748b;">
-                "${query}" 검색 결과: ${results.length}개
+                "${query}" 검색 결과: ${results.photos.length}개
             </div>
             <div class="photo-grid">${photosHtml}</div>
         `;
