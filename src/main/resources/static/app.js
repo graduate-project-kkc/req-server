@@ -15,6 +15,102 @@ const searchResultsData = {
     ],
 };
 
+let tasks = {};
+let taskGlobalId = 0;
+const tooltip = document.querySelector(".tooltiptext");
+
+setInterval(() => {
+    if (tooltip.focusing) tooltip.innerText = tasks[tooltip.focusing].desc;
+}, 1);
+
+/* Task UI 업데이트 */
+function renderTasks() {
+    const box = document.getElementById("taskBox");
+    const keys = Object.keys(tasks);
+
+    if (keys.length === 0) {
+        box.style.display = "none";
+        return;
+    }
+
+    box.style.display = "block";
+    box.innerHTML = ""; // 초기화
+
+    keys.forEach((id) => {
+        const t = tasks[id];
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "taskItem";
+
+        const title = document.createElement("div");
+        title.className = "taskTitle status-" + t.status.split(" ")[0];
+        title.innerText = t.title;
+
+        title.addEventListener("mousemove", (e) => {
+            tooltip.style.left = e.pageX + 10 + "px"; // Adjust offset as needed
+            tooltip.style.top = e.pageY + 10 + "px"; // Adjust offset as needed
+        });
+
+        title.addEventListener("mouseenter", () => {
+            tooltip.style.display = "block";
+            tooltip.focusing = id;
+        });
+
+        title.addEventListener("mouseleave", () => {
+            tooltip.style.display = "none";
+            tooltip.focusing = undefined;
+        });
+
+        const closeBtn = document.createElement("div");
+
+        if (t.status === "done" || t.status === "error") {
+            closeBtn.className = "taskClose";
+            closeBtn.innerText = "\u2bbe";
+            closeBtn.addEventListener("click", () => {
+                delete tasks[id];
+                renderTasks();
+            });
+        }
+
+        wrapper.appendChild(title);
+        wrapper.appendChild(closeBtn);
+        box.appendChild(wrapper);
+    });
+}
+
+/* Task 추가 */
+function addTask(taskId, title) {
+    tasks[taskId] = {
+        title,
+        status: "pending",
+        desc: "Pending",
+    };
+    renderTasks();
+}
+
+/* Task 상태 변경 */
+function updateTaskStatus(taskId, status, desc) {
+    if (!tasks[taskId]) return;
+    tasks[taskId].status = status;
+    tasks[taskId].desc = desc ?? status.charAt(0).toUpperCase().concat(status.slice(1));
+    renderTasks();
+}
+
+/* 데모용: 랜덤 작업 생성 & 상태 자동 변경 */
+function demoCreateTask() {
+    const id = Math.random().toString(36).slice(2, 7);
+    const tid = "task-" + id;
+    addTask(tid, "아무개 이미지 " + id);
+
+    // 상태 변화를 데모로 보여주기 위한 흐름
+    setTimeout(() => updateTaskStatus(tid, "processing"), 3000);
+    if (Math.random() < 0.5) {
+        setTimeout(() => updateTaskStatus(tid, "error"), 7000);
+    } else {
+        setTimeout(() => updateTaskStatus(tid, "done"), 7000);
+    }
+}
+
 // Tab switching
 function switchTab(tab) {
     // Update toggle buttons
@@ -54,15 +150,27 @@ function handleFileSelect(e) {
     handleFiles(files);
 }
 
+const fileNameDisplayLen = 15;
+
 async function handleFiles(files) {
     if (files.length > 0) {
         //alert(`${files.length}개의 파일이 선택되었습니다. 실제 서비스에서는 서버로 업로드됩니다.`);
         // 실제 구현에서는 여기서 FormData를 사용해 multipart/form-data로 서버에 전송
         const formData = new FormData();
+        let taskIds = [];
 
         for (let i = 0; i < files.length; i++) {
+            const fileName = files[i].name;
+            const taskId = "task-" + taskGlobalId++;
+            taskIds.push(taskId);
+
+            addTask(
+                taskId,
+                fileName.length > fileNameDisplayLen ? fileName.slice(0, fileNameDisplayLen) + "..." : fileName
+            );
             if (files[i].fileSize > 13 << 19) {
                 // The image is too big (>= 7.5MB)
+                updateTaskStatus(taskId, "error", "파일이 너무 큽니다.");
                 continue;
             }
 
@@ -70,7 +178,15 @@ async function handleFiles(files) {
             formData.append("files", files[i]); // files가 key
         }
 
-        return await apiPost("/api/images", formData);
+        const promise = apiPost("/api/images", formData);
+        taskIds.forEach((id_) => updateTaskStatus(id_, "processing"));
+        try {
+            const results = await promise;
+            taskIds.forEach((id_) => updateTaskStatus(id_, "done"));
+            return results;
+        } catch (error) {
+            taskIds.forEach((id_) => updateTaskStatus(id_, "error", "서버 통신 오류 : " + error));
+        }
     }
 }
 
