@@ -320,8 +320,8 @@ function updateSignUpButtonState(e) {
     let confirmed =
         getSignUpFormData()
             .entries()
-            .every((pair) => pair[0] == "verificationCode" || pair[1].trim().length > 0) &&
-        document.getElementById("pwdInput").value == document.getElementById("pwdConfirmInput").value;
+            .every((pair) => pair[0] === "verificationCode" || pair[1].trim().length > 0) &&
+        document.getElementById("pwdInput").value === document.getElementById("pwdConfirmInput").value;
 
     let signUpButton = document.getElementById("signUpBtn");
 
