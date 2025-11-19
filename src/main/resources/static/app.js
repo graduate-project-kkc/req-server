@@ -20,8 +20,21 @@ let taskGlobalId = 0;
 const tooltip = document.querySelector(".tooltiptext");
 
 setInterval(() => {
-    if (tooltip.focusing) tooltip.innerText = tasks[tooltip.focusing].desc;
+    if (tooltip.focusing) {
+        const desc = tasks[tooltip.focusing].desc;
+        if (desc) {
+            tooltip.style.display = "block";
+            tooltip.innerText = desc;
+        } else {
+            tooltip.style.display = "none";
+            tooltip.innerText = "";
+        }
+    }
 }, 1);
+
+function capitalize(s) {
+    return s.charAt(0).toUpperCase().concat(s.slice(1));
+}
 
 /* Task UI 업데이트 */
 function renderTasks() {
@@ -43,21 +56,23 @@ function renderTasks() {
         wrapper.className = "taskItem";
 
         const title = document.createElement("div");
-        title.className = "taskTitle status-" + t.status.split(" ")[0];
+        title.className = "taskTitle";
         title.innerText = t.title;
 
-        title.addEventListener("mousemove", (e) => {
+        const status = document.createElement("div");
+        status.className = "taskStatus status-" + t.status.split(" ")[0];
+        status.innerText = capitalize(t.status);
+
+        status.addEventListener("mousemove", (e) => {
             tooltip.style.left = e.pageX + 10 + "px"; // Adjust offset as needed
             tooltip.style.top = e.pageY + 10 + "px"; // Adjust offset as needed
         });
 
-        title.addEventListener("mouseenter", () => {
-            tooltip.style.display = "block";
+        status.addEventListener("mouseenter", () => {
             tooltip.focusing = id;
         });
 
-        title.addEventListener("mouseleave", () => {
-            tooltip.style.display = "none";
+        status.addEventListener("mouseleave", () => {
             tooltip.focusing = undefined;
         });
 
@@ -65,14 +80,17 @@ function renderTasks() {
 
         if (t.status === "done" || t.status === "error") {
             closeBtn.className = "taskClose";
-            closeBtn.innerText = "\u2bbe";
+            closeBtn.innerText = "\u2716";
             closeBtn.addEventListener("click", () => {
                 delete tasks[id];
                 renderTasks();
             });
+        } else {
+            closeBtn.className = "loading-spinner";
         }
 
         wrapper.appendChild(title);
+        wrapper.appendChild(status);
         wrapper.appendChild(closeBtn);
         box.appendChild(wrapper);
     });
@@ -83,7 +101,6 @@ function addTask(taskId, title) {
     tasks[taskId] = {
         title,
         status: "pending",
-        desc: "Pending",
     };
     renderTasks();
 }
@@ -92,7 +109,7 @@ function addTask(taskId, title) {
 function updateTaskStatus(taskId, status, desc) {
     if (!tasks[taskId]) return;
     tasks[taskId].status = status;
-    tasks[taskId].desc = desc ?? status.charAt(0).toUpperCase().concat(status.slice(1));
+    tasks[taskId].desc = desc;
     renderTasks();
 }
 
