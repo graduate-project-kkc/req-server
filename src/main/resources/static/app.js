@@ -358,14 +358,21 @@ document
         }
     });
 
-function sendEmailVerification() {
+async function sendEmailVerification() {
     let signUpModal = document.getElementById("signUpModal");
     let sendCodeButton = document.getElementById("sendCodeBtn");
     sendCodeButton.innerHTML = "전송 중...";
     sendCodeButton.disabled = true;
 
-    const result = apiPost("/api/users/email-verification", getSignUpFormData()); // TODO: to be tested
-    console.log(result);
+    try {
+        const result = await apiPost("/api/users/email-verification", getSignUpFormData()); // TODO: to be tested
+        console.log(result);
+    } catch (e) {
+        sendCodeButton.innerHTML = "오류. 다시 시도";
+        sendCodeButton.disabled = false;
+        console.log(e);
+        return;
+    }
 
     // Wait 5 minutes (EMAIL_VERIFICATION_EXPIRY_MINUTES) for next sending verification code
     signUpModal.emailSent = true;
@@ -378,6 +385,7 @@ function sendEmailVerification() {
             signUpModal.emailSent = false;
             updateButtonState();
             sendCodeButton.innerHTML = "인증번호 다시 요청";
+            sendCodeButton.disabled = false;
         }
     }
     countdownFunc();
