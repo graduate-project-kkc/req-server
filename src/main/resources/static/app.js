@@ -181,10 +181,7 @@ async function handleFiles(files) {
             const taskId = "task-" + taskGlobalId++;
             taskIds.push(taskId);
 
-            addTask(
-                taskId,
-                fileName.length > fileNameDisplayLen ? fileName.slice(0, fileNameDisplayLen) + "..." : fileName
-            );
+            addTask(taskId, fileName.length > fileNameDisplayLen ? fileName.slice(0, fileNameDisplayLen) + "..." : fileName);
             if (files[i].fileSize > 13 << 19) {
                 // The image is too big (>= 7.5MB)
                 updateTaskStatus(taskId, "error", "파일이 너무 큽니다.");
@@ -388,10 +385,63 @@ function sendEmailVerification() {
     document.getElementById("codeInput").hidden = false;
 }
 
-function handleSignUp() {
-    const result = apiPost("/api/users/signup", getSignUpFormData());
-    console.log(result); // TODO
-    closeSignUpModal();
+async function handleSignUp() {
+    let success = null;
+    try {
+        const result = await apiPost("/api/users/signup", getSignUpFormData());
+        console.log(result); // TODO
+        success = true;
+    } catch (e) {
+        console.log(e);
+        success = false;
+    }
+
+    const signUpNofityModal = document.createElement("div");
+    signUpNofityModal.className = "modal active";
+
+    const container = document.createElement("div");
+    container.className = "modal-content";
+
+    const message = document.createElement("div");
+    message.innerText = success ? "회원가입이 완료되었습니다! 로그인 해주세요." : "회원가입에 실패했습니다! 다시 시도해주세요.";
+
+    const btnContainer = document.createElement("div");
+    btnContainer.className = "modal-buttons";
+
+    if (success) {
+        const closeBtn = document.createElement("button");
+        closeBtn.className = "modal-btn secondary";
+        closeBtn.innerText = "닫기";
+        closeBtn.onclick = (e) => {
+            document.body.removeChild(signUpNofityModal);
+            closeSignUpModal();
+        };
+
+        const loginBtn = document.createElement("button");
+        loginBtn.className = "modal-btn primary";
+        loginBtn.innerText = "로그인";
+        loginBtn.onclick = (e) => {
+            document.body.removeChild(signUpNofityModal);
+            openLoginModal();
+        };
+
+        btnContainer.appendChild(closeBtn);
+        btnContainer.appendChild(loginBtn);
+    } else {
+        const closeBtn = document.createElement("button");
+        closeBtn.className = "modal-btn secondary";
+        closeBtn.innerText = "닫기";
+        closeBtn.onclick = (e) => {
+            document.body.removeChild(signUpNofityModal);
+        };
+
+        btnContainer.appendChild(closeBtn);
+    }
+    container.appendChild(message);
+    container.appendChild(btnContainer);
+    signUpNofityModal.appendChild(container);
+
+    document.body.appendChild(signUpNofityModal);
 }
 
 // Close modal when clicking outside
