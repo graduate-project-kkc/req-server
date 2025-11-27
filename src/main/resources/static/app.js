@@ -233,6 +233,7 @@ async function performSearch() {
                 <div class="photo-info">
                     <div class="photo-title">${photos.url.split("/").pop()}</div> 
                     <div class="photo-meta">socre: ${photos.score.toFixed(3)}</div> 
+                    <div class="photo-meta">score(test): ${((1 - Math.acos(photos.score) / Math.PI) * 100).toFixed(2)}%</div> 
                     <div class="photo-meta">size: ${photos.size}MB</div>
                 </div>
             </div>
