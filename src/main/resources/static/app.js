@@ -527,6 +527,14 @@ function renderDefaultPhtos() {
     return `
             <div class="photo-grid" id="defaultPhotos">
                 <div class="photo-card">
+                    <img class="photo-img" src="./20240828_125101.jpg">
+                    <div class="photo-info">
+                        <div class="photo-title">테스트</div>
+                        <div class="photo-meta">크기: 1MB</div>
+                        <div class="photo-meta">업로드: 1234-56-78</div>
+                    </div>
+                </div>
+                <div class="photo-card">
                     <div class="photo-img">🏔️</div>
                     <div class="photo-info">
                         <div class="photo-title">산악 풍경</div>
@@ -603,12 +611,16 @@ document.addEventListener("contextmenu", function (e) {
             return;
         }
         e.preventDefault();
-        showMenu(e.clientX, e.clientY, elem);
+        showMenu(e.pageX, e.pageY, elem);
     }
 });
 
 document.addEventListener("pointerdown", function (e) {
     if (e.target.closest(".photo-card") !== contextTarget && !e.target.closest("#customContextMenu")) hideMenu();
+});
+
+document.addEventListener("scroll", function (e) {
+    hideMenu();
 });
 
 document.addEventListener("keydown", function (e) {
