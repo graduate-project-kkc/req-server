@@ -286,11 +286,16 @@ function closeLoginModal() {
 }
 
 function getLoginFormData() {
-    return new FormData(document.getElementById("loginModal").querySelector("form"));
+    const formData = new FormData(document.getElementById("loginModal").querySelector("form"));
+    let obj = {};
+    formData.forEach((value, key) => {
+        obj[key] = value;
+    }); 
+    return obj;
 }
 
-function handleLogin(e) {
-    const result = apiPost("/api/users/login", getLoginFormData());
+async function handleLogin(e) {
+    const result = await apiPost("/api/users/login", JSON.stringify(getLoginFormData()));
     localStorage.setItem("token", result.token);
     closeLoginModal();
 }
@@ -328,7 +333,12 @@ function closeSignUpModal() {
 }
 
 function getSignUpFormData() {
-    return new FormData(document.getElementById("signUpModal").querySelector("form"));
+    const formData = new FormData(document.getElementById("signUpModal").querySelector("form"));
+    let obj = {};
+    formData.forEach((value, key) => {
+        obj[key] = value;
+    }); 
+    return obj; 
 }
 
 function updateSignUpButtonState(e) {
@@ -367,7 +377,7 @@ async function sendEmailVerification() {
     sendCodeButton.disabled = true;
 
     try {
-        const result = await apiPost("/api/users/email-verification", getSignUpFormData()); // TODO: to be tested
+        const result = await apiPost("/api/users/email-verification", JSON.stringify(getSignUpFormData())); // TODO: to be tested
         console.log(result);
     } catch (e) {
         sendCodeButton.innerHTML = "오류. 다시 시도";
