@@ -304,9 +304,7 @@ function updateLoginButtonState(e) {
     // Login modal : Enable login button only when the user filled both input boxes
     let loginBtn = document.getElementById("loginBtn");
     if (
-        getLoginFormData()
-            .values()
-            .every((value) => value.trim().length > 0)
+        Object.values(getLoginFormData()).every((value) => value.trim().length > 0)
     ) {
         loginBtn.disabled = false;
         loginBtn.classList.add("primary");
@@ -344,9 +342,7 @@ function getSignUpFormData() {
 function updateSignUpButtonState(e) {
     // Sign-up modal : If the input password is not confirmed, deactivate the sign-up-related buttons
     let confirmed =
-        getSignUpFormData()
-            .entries()
-            .every((pair) => pair[0] === "verificationCode" || pair[1].trim().length > 0) &&
+        Object.entries(getSignUpFormData()).every((pair) => pair[0] === "verificationCode" || pair[1].trim().length > 0) &&
         document.getElementById("pwdInput").value === document.getElementById("pwdConfirmInput").value;
 
     let signUpButton = document.getElementById("signUpBtn");
