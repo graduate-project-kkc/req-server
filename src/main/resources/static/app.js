@@ -156,6 +156,8 @@ function handleDragLeave(e) {
     e.currentTarget.classList.remove("dragover");
 }
 
+const fileNameDisplayLen = 15;
+
 function handleDrop(e) {
     e.preventDefault();
     e.currentTarget.classList.remove("dragover");
@@ -167,8 +169,6 @@ function handleFileSelect(e) {
     const files = e.target.files;
     handleFiles(files);
 }
-
-const fileNameDisplayLen = 15;
 
 async function handleFiles(files) {
     if (files.length > 0) {
@@ -194,6 +194,54 @@ async function handleFiles(files) {
         }
 
         const promise = apiPost("/api/images", formData);
+        taskIds.forEach((id_) => updateTaskStatus(id_, "processing"));
+        try {
+            const results = await promise;
+            taskIds.forEach((id_) => updateTaskStatus(id_, "done"));
+            return results;
+        } catch (error) {
+            taskIds.forEach((id_) => updateTaskStatus(id_, "error", "서버 통신 오류 : " + error));
+        }
+    }
+}
+
+function handleSearchDrop(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove("dragover");
+    const file = e.dataTransfer.files;
+    handleSearchFiles(file);
+}
+
+function handleSearchFileSelect(e) {
+    const file = e.target.files;
+    handleSearchFiles(file);
+}
+
+async function handleSearchFiles(file) {
+    console.log(file);
+    if (file) {
+        const formData = new FormData();
+        let taskIds = [];
+
+        const fileName = file.name;
+        const taskId = "task-" + taskGlobalId++;
+        taskIds.push(taskId);
+
+        addTask(taskId, fileName.length > fileNameDisplayLen ? fileName.slice(0, fileNameDisplayLen) + "..." : fileName);
+        if (file.fileSize > 13 << 19) {
+            // The image is too big (>= 7.5MB)
+            updateTaskStatus(taskId, "error", "파일이 너무 큽니다.");
+            return;
+        }
+
+        console.log(file);
+
+        formData.append("files", file); // files가 key
+        // const promise = apiPost("/api/images", formData);
+
+        const promise = (async () => {})();
+        // TODO - new search API
+
         taskIds.forEach((id_) => updateTaskStatus(id_, "processing"));
         try {
             const results = await promise;
