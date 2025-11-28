@@ -9,7 +9,7 @@ COPY . .
 RUN gradle clean build -x test --no-daemon
 
 # ── 2) Runtime stage ────────────────────────────────────────
-FROM openjdk:21-jdk
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
 # builder 스테이지에서 생성된 fat-jar만 복사
