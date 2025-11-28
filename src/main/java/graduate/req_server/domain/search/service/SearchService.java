@@ -7,6 +7,7 @@ import graduate.req_server.util.client.ai.AiClient;
 import graduate.req_server.util.client.pinecone.PineconeClient;
 import graduate.req_server.util.client.s3.S3Service;
 import graduate.req_server.util.security.SecurityUtil;
+import graduate.req_server.util.client.translate.TranslationService;
 import io.pinecone.unsigned_indices_model.ScoredVectorWithUnsignedIndices;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class SearchService {
     private final AiClient aiClient;
     private final PineconeClient pineconeClient;
     private final S3Service s3Service;
+    private final TranslationService translationService;
 
     public SearchResponse searchByText(SearchRequest request) {
         log.debug("[SearchService] searchByText");
@@ -28,8 +30,10 @@ public class SearchService {
         double minScore = 0.1;
 
         String userId = SecurityUtil.getCurrentUserId();
-
-        List<Float> vector = aiClient.textToVector(request.getQuery());
+        
+        String query = translationService.translate(request.getQuery(), "auto", "en");
+        log.info("translation result: {}", query);
+        List<Float> vector = aiClient.textToVector(query);
         List<ScoredVectorWithUnsignedIndices> matches = pineconeClient.queryTopKWithUserId(vector, userId);
 
         List<PhotoInfo> photos = matches.stream()
