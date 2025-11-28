@@ -142,6 +142,7 @@ function switchTab(tab) {
     if (tab === "search") {
         console.log("loadPhothoStatus");
         loadPhotoStats(); // 통계 API 요청
+        performSearch();
     }
 }
 
@@ -522,3 +523,67 @@ function renderDefaultPhtos() {
             </div>
         `;
 }
+
+let contextMenu = document.getElementById("customContextMenu");
+let contextTarget = null;
+
+function showMenu(x, y, target) {
+    contextMenu.style.left = x + "px";
+    contextMenu.style.top = y + "px";
+    contextMenu.style.display = "block";
+    contextMenu.setAttribute("aria-hidden", "false");
+    contextTarget = target;
+}
+
+function hideMenu() {
+    contextMenu.style.display = "none";
+    contextMenu.setAttribute("aria-hidden", "true");
+    contextTarget = null;
+}
+
+document.addEventListener("contextmenu", function (e) {
+    let elem = e.target.closest(".photo-card");
+    if (elem?.firstElementChild.tagName.toLowerCase() === "img") {
+        if (contextTarget === elem) {
+            hideMenu();
+            return;
+        }
+        e.preventDefault();
+        showMenu(e.clientX, e.clientY, elem);
+    }
+});
+
+document.addEventListener("pointerdown", function (e) {
+    if (e.target.closest(".photo-card") !== contextTarget && !e.target.closest("#customContextMenu")) hideMenu();
+});
+
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") hideMenu();
+});
+
+contextMenu.addEventListener("click", async function (e) {
+    const item = e.target.closest(".context-menu-item");
+    if (!(item && contextTarget)) {
+        hideMenu();
+        return;
+    }
+
+    const img_src = contextTarget.firstElementChild.src;
+    const action = item.dataset.action;
+
+    try {
+        if (action === "save") {
+            const tempLink = document.createElement("a");
+            tempLink.style.display = "none";
+            tempLink.href = img_src;
+            tempLink.download = img_src.split('/').pop().split('?')[0] || "image";
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+        }
+    } catch (e) {
+        console.error(e);
+    } finally {
+        hideMenu();
+    }
+});
