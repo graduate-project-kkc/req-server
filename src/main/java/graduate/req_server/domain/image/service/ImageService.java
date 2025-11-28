@@ -5,6 +5,7 @@ import graduate.req_server.util.client.ai.AiClient;
 import graduate.req_server.util.client.ai.dto.UploadResponse;
 import graduate.req_server.util.client.s3.S3Service;
 import graduate.req_server.util.file.MultipartUtils;
+import graduate.req_server.util.security.SecurityUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,16 +21,15 @@ public class ImageService {
     private final AiClient aiClient;
 
     public UploadResponse uploadAndProcess(ImageRequest request) {
-        log.debug("[ImageService] uploadAndProcess");
+        String userId = SecurityUtil.getCurrentUserId();
 
         List<MultipartFile> files = request.getFiles();
         MultipartUtils.validateFiles(files);
 
         List<String> keys = files.stream()
-                .map(s3Service::uploadFile)
+                .map(file -> s3Service.uploadFile(file, userId))
                 .toList();
 
-        // AI 처리
-        return aiClient.vectorizeAndStore(keys);
+        return aiClient.vectorizeAndStore(keys, userId);
     }
 }

@@ -1,11 +1,14 @@
 spring:
   application:
     name: req-server
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: ${DATASOURCE_URL}
-#    username: ${DATASOURCE_USERNAME}
-#    password: ${DATASOURCE_PASSWORD}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
 # S3
   cloud:
     aws:
@@ -19,6 +22,17 @@ spring:
     multipart:
       max-file-size: 25MB
       max-request-size: 300MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 # AI
 ai:
@@ -31,3 +45,7 @@ pinecone:
   api-key: ${PINECONE_API_KEY}
   index-name: ${PINECONE_INDEX_NAME}
   top-k: ${TOP_K}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration_time: ${JWT_EXPIRATION}
