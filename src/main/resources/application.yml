@@ -48,4 +48,4 @@ pinecone:
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration_time: 3600000
+  expiration_time: ${JWT_EXPIRATION}
