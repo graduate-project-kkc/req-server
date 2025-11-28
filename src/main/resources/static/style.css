@@ -460,6 +460,9 @@ body {
     font-size: 14px;
     white-space: nowrap;
     margin: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .context-menu-item:hover {
