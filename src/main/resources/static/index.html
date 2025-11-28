@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Search Service</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="logo">📸 Photo Search</div>
@@ -27,12 +29,13 @@
         <!-- Upload Section -->
         <div id="upload-section" class="content-section active">
             <h2 class="section-title">사진 업로드</h2>
-            <div class="upload-area" onclick="document.getElementById('fileInput').click()" 
-                 ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()" ondrop="handleDrop(event)"
+                ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
                 <div class="upload-icon">📁</div>
                 <div class="upload-text">파일을 드래그하거나 클릭하여 업로드</div>
                 <div class="upload-subtext">JPG, PNG, GIF 파일을 지원합니다</div>
-                <input type="file" id="fileInput" class="file-input" multiple accept="image/*" onchange="handleFileSelect(event)">
+                <input type="file" id="fileInput" class="file-input" multiple accept="image/*"
+                    onchange="handleFileSelect(event)">
                 <button class="upload-btn">파일 선택</button>
             </div>
         </div>
@@ -40,7 +43,7 @@
         <!-- Search Section -->
         <div id="search-section" class="content-section">
             <h2 class="section-title">사진 검색</h2>
-            
+
             <!-- Search Input -->
             <textarea class="search-input" placeholder="검색할 내용을 입력하세요... (예: 바다에서 노는 강아지)" id="searchInput"></textarea>
             <button class="search-btn" onclick="performSearch()">검색</button>
@@ -121,23 +124,69 @@
             <form>
                 <div class="form-group">
                     <label class="form-label">이메일</label>
-                    <input type="email" class="form-input" placeholder="이메일을 입력하세요">
+                    <input name="email" type="email" class="form-input" placeholder="이메일을 입력하세요">
                 </div>
                 <div class="form-group">
                     <label class="form-label">비밀번호</label>
-                    <input type="password" class="form-input" placeholder="비밀번호를 입력하세요">
+                    <input name="password" type="password" class="form-input" placeholder="비밀번호를 입력하세요">
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="modal-btn secondary" onclick="closeLoginModal()">취소</button>
-                    <button type="button" class="modal-btn primary" onclick="handleLogin()">로그인</button>
+                    <button type="button" class="modal-btn secondary" onclick="openSignUpModal()">회원가입</button>
+                    <button id="loginBtn" type="button" class="modal-btn primary" onclick="handleLogin()">로그인</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Sign-up Modal -->
+    <div id="signUpModal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">회원가입</h3>
+            <form>
+                <div class="form-group">
+                    <label class="form-label">이메일</label>
+                    <input name="email" type="email" class="form-input" placeholder="이메일을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">닉네임</label>
+                    <input name="username" type="text" class="form-input" placeholder="닉네임을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">비밀번호</label>
+                    <input name="password" id="pwdInput" type="password" class="form-input" placeholder="비밀번호를 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">비밀번호 확인</label>
+                    <input id="pwdConfirmInput" type="password" class="form-input" placeholder="입력한 비밀번호를 다시 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">인증번호</label>
+                    <button id="sendCodeBtn" type="button" class="modal-btn" onclick="sendEmailVerification()">인증번호
+                        요청</button>
+                    <input hidden name="verificationCode" id="codeInput" type="text" class="form-input"
+                        placeholder="인증번호를 입력하세요">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn secondary" onclick="closeSignUpModal()">취소</button>
+                    <button type="button" class="modal-btn secondary" onclick="openLoginModal()">로그인</button>
+                    <button id="signUpBtn" type="button" class="modal-btn primary"
+                        onclick="handleSignUp()">회원가입</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="taskBox"></div>
+    <div class="tooltiptext"></div>
+    <div id="customContextMenu" class="context-menu" role="menu" aria-hidden="true">
+        <div class="context-menu-item" data-action="save">이미지 저장</div>
+    </div>
+
     <script src="app.js"></script>
     <script src="api.js"></script>
-    
-    
+
+
 </body>
+
 </html>

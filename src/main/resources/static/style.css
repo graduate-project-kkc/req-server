@@ -333,3 +333,132 @@ body {
     font-style: italic;
     margin-top: 2rem;
 }
+
+#taskBox {
+    position: fixed;
+    width: 350px;
+    right: 20px;
+    bottom: 20px;
+    background: #00000000;
+    border-radius: 12px;
+    padding: 15px;
+    font-family: sans-serif;
+    display: none;
+    z-index: 10000;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.taskItem {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    color: #000;
+    padding: 1rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 10001;
+}
+
+.taskTitle {
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: 0.2rem;
+    flex: 1;
+}
+
+.taskStatus {
+    margin-right: 10px;
+    font-size: 15px;
+}
+
+.taskClose {
+    cursor: pointer;
+    color: #94a3b8;
+    width: 20px;
+    height: 20px;
+    font-size: 15px;
+    text-align: center;
+    user-select: none;
+}
+
+.status-pending {
+    color: #e6c616;
+}
+
+.status-processing {
+    color: #4dafff;
+}
+
+.status-done {
+    color: #4bcc7e;
+}
+
+.status-error {
+    color: #db3428;
+}
+
+.tooltiptext {
+    display: none;
+    position: fixed;
+    overflow: hidden;
+    background-color: #55555580;
+    color: #ffffff;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;
+    z-index: 10002;
+}
+
+.taskTitle:hover .tooltiptext {
+    display: block;
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid gray;
+    border-top: 2px solid #4d8bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.context-menu {
+    position: absolute;
+    left: 0;
+    top: 0;
+    min-width: 200px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    padding: 6px 4px;
+    z-index: 9999;
+    display: none;
+    user-select: none;
+}
+
+.context-menu__item {
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    margin: 4px;
+}
+
+.context-menu__item:hover {
+    background: #f2f2f2;
+}
