@@ -373,8 +373,8 @@ async function sendEmailVerification() {
     sendCodeButton.disabled = true;
 
     try {
-        const result = await apiPost("/api/users/email-verification", JSON.stringify(getSignUpFormData())); // TODO: to be tested
-        console.log(JSON.parse(result).verificationCode);  // TODO
+        const result = await apiPost("/api/users/email-verification", JSON.stringify(getSignUpFormData()));
+        // console.log(JSON.parse(result).verificationCode);
     } catch (e) {
         sendCodeButton.innerHTML = "오류. 다시 시도";
         sendCodeButton.disabled = false;
