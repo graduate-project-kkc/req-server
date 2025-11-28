@@ -296,7 +296,7 @@ function getLoginFormData() {
 
 async function handleLogin(e) {
     const result = await apiPost("/api/users/login", JSON.stringify(getLoginFormData()));
-    localStorage.setItem("token", result.token);
+    localStorage.setItem("token", JSON.parse(result).accessToken);
     closeLoginModal();
 }
 
@@ -374,7 +374,7 @@ async function sendEmailVerification() {
 
     try {
         const result = await apiPost("/api/users/email-verification", JSON.stringify(getSignUpFormData())); // TODO: to be tested
-        console.log(result);
+        console.log(JSON.parse(result).verificationCode);  // TODO
     } catch (e) {
         sendCodeButton.innerHTML = "오류. 다시 시도";
         sendCodeButton.disabled = false;
