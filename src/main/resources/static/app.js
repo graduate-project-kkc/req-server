@@ -641,3 +641,55 @@ contextMenu.addEventListener("click", async function (e) {
         hideMenu();
     }
 });
+
+/* View Modal Logic */
+const viewModal = document.getElementById("viewModal");
+const viewModalImg = document.getElementById("viewModalImg");
+const viewModalTitle = document.getElementById("viewModalTitle");
+const viewModalMeta = document.getElementById("viewModalMeta");
+
+function openViewModal(card) {
+    const img = card.querySelector("img");
+    if (!img) return; // Should not happen based on requirements, but safety check
+
+    const title = card.querySelector(".photo-title")?.innerText || "No Title";
+    // Collect all meta info
+    const metaDivs = card.querySelectorAll(".photo-meta");
+    let metaHtml = "";
+    metaDivs.forEach(div => {
+        metaHtml += `<div>${div.innerText}</div>`;
+    });
+
+    viewModalImg.src = img.src;
+    viewModalTitle.innerText = title;
+    viewModalMeta.innerHTML = metaHtml;
+
+    viewModal.classList.add("active");
+}
+
+function closeViewModal() {
+    viewModal.classList.remove("active");
+    viewModalImg.src = ""; // Clear src
+}
+
+// Double click event for photo cards
+document.addEventListener("dblclick", function(e) {
+    const card = e.target.closest(".photo-card");
+    if (card) {
+        openViewModal(card);
+    }
+});
+
+// Close modal when clicking outside
+viewModal.addEventListener("click", function(e) {
+    if (e.target === viewModal) {
+        closeViewModal();
+    }
+});
+
+// Close on Escape key
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape" && viewModal.classList.contains("active")) {
+        closeViewModal();
+    }
+});
