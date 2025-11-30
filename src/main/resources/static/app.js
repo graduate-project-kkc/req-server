@@ -351,10 +351,10 @@ function getLoginFormData() {
 
 async function handleLogin(e) {
     const result = await apiPost("/api/users/login", JSON.stringify(getLoginFormData()));
-    localStorage.setItem("token", JSON.parse(result).accessToken);
+    localStorage.setItem("token", result.accessToken);
     document.getElementById("loginBtnContainer").style.display = "none";
     document.getElementById("logoutBtnContainer").style.display = "flex";
-    document.getElementById("username").textContent = "환영합니다, " + JSON.parse(result).username;
+    document.getElementById("username").textContent = "환영합니다, " + result.username;
     closeLoginModal();
 }
 
