@@ -12,8 +12,16 @@
 
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="logo">📸 Photo Search</div>
-        <button class="login-btn" onclick="openLoginModal()">로그인</button>
+        <div class="nav-left">
+            <div class="logo">📸 Photo Search</div>
+        </div>
+        <div id="loginBtnContainer" class="nav-right">
+            <button class="login-btn" onclick="openLoginModal()">로그인</button>
+        </div>
+        <div id="logoutBtnContainer" class="nav-right" style="display: none;">
+            <div class="username" id="username">이스터에그</div>
+            <button class="login-btn" onclick="logout()">로그아웃</button>
+        </div>
     </nav>
 
     <!-- Main Container -->

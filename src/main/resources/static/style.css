@@ -21,6 +21,22 @@ body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.username {
+    font-size: 1rem;
+    flex-grow: 1;
+}
+
 .logo {
     font-size: 1.5rem;
     font-weight: bold;

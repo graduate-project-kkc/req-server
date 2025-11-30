@@ -142,7 +142,7 @@ function switchTab(tab) {
     if (tab === "search") {
         console.log("loadPhothoStatus");
         loadPhotoStats(); // 통계 API 요청
-        performSearch();
+        // performSearch();
     }
 }
 
@@ -345,6 +345,9 @@ function getLoginFormData() {
 async function handleLogin(e) {
     const result = await apiPost("/api/users/login", JSON.stringify(getLoginFormData()));
     localStorage.setItem("token", JSON.parse(result).accessToken);
+    document.getElementById("loginBtnContainer").style.display = "none";
+    document.getElementById("logoutBtnContainer").style.display = "flex";
+    document.getElementById("username").textContent = "환영합니다, " + JSON.parse(result).username;
     closeLoginModal();
 }
 
@@ -366,6 +369,12 @@ document
     .getElementById("loginModal")
     .querySelectorAll("input")
     .forEach((element) => element.addEventListener("input", updateLoginButtonState));
+
+function logout() {
+    localStorage.removeItem("token");
+    document.getElementById("loginBtnContainer").style.display = "flex";
+    document.getElementById("logoutBtnContainer").style.display = "none";
+}
 
 // Sign-up modal
 function openSignUpModal() {
@@ -390,7 +399,7 @@ function getSignUpFormData() {
 function updateSignUpButtonState(e) {
     // Sign-up modal : If the input password is not confirmed, deactivate the sign-up-related buttons
     let confirmed =
-        Object.entries(getSignUpFormData()).every((pair) => pair[0] === "verificationCode" || pair[1].trim().length > 0) &&
+        Object.entries(getSignUpFormData()).every((pair) => pair[1].trim().length > 0) &&
         document.getElementById("pwdInput").value === document.getElementById("pwdConfirmInput").value;
 
     let signUpButton = document.getElementById("signUpBtn");
@@ -422,7 +431,6 @@ async function sendEmailVerification() {
 
     try {
         const result = await apiPost("/api/users/email-verification", JSON.stringify(getSignUpFormData()));
-        // console.log(JSON.parse(result).verificationCode);
     } catch (e) {
         sendCodeButton.innerHTML = "오류. 다시 시도";
         sendCodeButton.disabled = false;
