@@ -6,7 +6,7 @@ async function apiGet(endpoint) {
         method: "GET",
     };
     if (localStorage.getItem("token")) {
-        init.headers = { "Authorization": "Bearer " + localStorage.getItem("token") };
+        init.headers = { "Authorization": "Bearer " + localStorage.getItem("accessToken") };
     }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, init);
@@ -21,14 +21,14 @@ async function apiGet(endpoint) {
     }
 }
 
-async function apiPost(endpoint, data, contentType) {
+async function apiPost(endpoint, data, _contentType) {
     let init = {
         method: "POST",
-        headers: { "Content-Type": contentType || "application/json" },
+        headers: { "Content-Type": _contentType || "application/json" },
         body: data,
     };
     if (localStorage.getItem("token")) {
-        init.headers = { "Authorization": "Bearer " + localStorage.getItem("token") };
+        init.headers = { "Authorization": "Bearer " + localStorage.getItem("accessToken") };
     }
     const response = await fetch(`${API_BASE_URL}${endpoint}`, init);
     if (!response.ok) {
