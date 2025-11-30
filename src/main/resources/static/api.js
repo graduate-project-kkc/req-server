@@ -5,7 +5,7 @@ async function apiGet(endpoint) {
     let init = {
         method: "GET",
     };
-    if (localStorage.getItem("token")) {
+    if (localStorage.getItem("accessToken")) {
         init.headers = { "Authorization": "Bearer " + localStorage.getItem("accessToken") };
     }
 
@@ -27,9 +27,10 @@ async function apiPost(endpoint, data, _contentType) {
         headers: { "Content-Type": _contentType || "application/json" },
         body: data,
     };
-    if (localStorage.getItem("token")) {
+    if (localStorage.getItem("accessToken")) {
         init.headers["Authorization"] = "Bearer " + localStorage.getItem("accessToken");
     }
+
     const response = await fetch(`${API_BASE_URL}${endpoint}`, init);
     if (!response.ok) {
         throw new Error(`POST ${endpoint} 실패`);
