@@ -201,7 +201,7 @@ async function handleFiles(files) {
             formData.append("files", files[i]); // files가 key
         }
 
-        const promise = apiPost("/api/images", formData);
+        const promise = apiPost("/api/images", formData, "multipart/form-data");
         taskIds.forEach((id_) => updateTaskStatus(id_, "processing"));
         try {
             const results = await promise;
