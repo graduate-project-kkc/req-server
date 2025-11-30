@@ -13,18 +13,18 @@ async function apiGet(endpoint) {
     if (!response.ok) {
         throw new Error(`GET ${endpoint} 실패`);
     }
-    const contentType = response.headers.get('Content-type');
-    if (contentType && contentType.includes('application/json')) {
+    const contentType = response.headers.get("Content-type");
+    if (contentType && contentType.includes("application/json")) {
         return await response.json();
     } else {
         return null;
     }
 }
 
-async function apiPost(endpoint, data) {
+async function apiPost(endpoint, data, contentType) {
     let init = {
         method: "POST",
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": contentType || "application/json" },
         body: data,
     };
     if (localStorage.getItem("token")) {
@@ -34,8 +34,8 @@ async function apiPost(endpoint, data) {
     if (!response.ok) {
         throw new Error(`POST ${endpoint} 실패`);
     }
-    const contentType = response.headers.get('Content-type');
-    if (contentType && contentType.includes('application/json')) {
+    const contentType = response.headers.get("Content-type");
+    if (contentType && contentType.includes("application/json")) {
         return await response.json();
     } else {
         return null;
