@@ -13,7 +13,12 @@ async function apiGet(endpoint) {
     if (!response.ok) {
         throw new Error(`GET ${endpoint} 실패`);
     }
-    return await response.json();
+    const contentType = response.headers.get('Content-type');
+    if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+    } else {
+        return null;
+    }
 }
 
 async function apiPost(endpoint, data) {
@@ -29,5 +34,10 @@ async function apiPost(endpoint, data) {
     if (!response.ok) {
         throw new Error(`POST ${endpoint} 실패`);
     }
-    return await response.json();
+    const contentType = response.headers.get('Content-type');
+    if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+    } else {
+        return null;
+    }
 }
