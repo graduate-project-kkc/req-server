@@ -15,6 +15,14 @@ const searchResultsData = {
     ],
 };
 
+function customScore(v) {
+    let sigmoid = (x) => (1 / (1 + Math.exp(-x)));
+    const amplifier = 5;
+    const scoreMin = sigmoid(-amplifier);
+    const scoreMax = sigmoid(amplifier);
+    return (sigmoid(v * amplifier) - scoreMin) / (scoreMax - scoreMin);
+}
+
 let tasks = {};
 let taskGlobalId = 0;
 const tooltip = document.querySelector(".tooltiptext");
@@ -142,7 +150,7 @@ function switchTab(tab) {
     if (tab === "search") {
         console.log("loadPhothoStatus");
         loadPhotoStats(); // 통계 API 요청
-        performSearch();
+        // performSearch();
     }
 }
 
@@ -156,6 +164,8 @@ function handleDragLeave(e) {
     e.currentTarget.classList.remove("dragover");
 }
 
+const fileNameDisplayLen = 15;
+
 function handleDrop(e) {
     e.preventDefault();
     e.currentTarget.classList.remove("dragover");
@@ -167,8 +177,6 @@ function handleFileSelect(e) {
     const files = e.target.files;
     handleFiles(files);
 }
-
-const fileNameDisplayLen = 15;
 
 async function handleFiles(files) {
     if (files.length > 0) {
@@ -194,6 +202,54 @@ async function handleFiles(files) {
         }
 
         const promise = apiPost("/api/images", formData);
+        taskIds.forEach((id_) => updateTaskStatus(id_, "processing"));
+        try {
+            const results = await promise;
+            taskIds.forEach((id_) => updateTaskStatus(id_, "done"));
+            return results;
+        } catch (error) {
+            taskIds.forEach((id_) => updateTaskStatus(id_, "error", "서버 통신 오류 : " + error));
+        }
+    }
+}
+
+function handleSearchDrop(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove("dragover");
+    const file = e.dataTransfer.files;
+    handleSearchFiles(file);
+}
+
+function handleSearchFileSelect(e) {
+    const file = e.target.files;
+    handleSearchFiles(file);
+}
+
+async function handleSearchFiles(file) {
+    console.log(file);
+    if (file) {
+        const formData = new FormData();
+        let taskIds = [];
+
+        const fileName = file.name;
+        const taskId = "task-" + taskGlobalId++;
+        taskIds.push(taskId);
+
+        addTask(taskId, fileName.length > fileNameDisplayLen ? fileName.slice(0, fileNameDisplayLen) + "..." : fileName);
+        if (file.fileSize > 13 << 19) {
+            // The image is too big (>= 7.5MB)
+            updateTaskStatus(taskId, "error", "파일이 너무 큽니다.");
+            return;
+        }
+
+        console.log(file);
+
+        formData.append("files", file); // files가 key
+        // const promise = apiPost("/api/images", formData);
+
+        const promise = (async () => {})();
+        // TODO - new search API
+
         taskIds.forEach((id_) => updateTaskStatus(id_, "processing"));
         try {
             const results = await promise;
@@ -233,9 +289,8 @@ async function performSearch() {
                 <img class="photo-img" src=${photos.url} alt="photo">
                 <div class="photo-info">
                     <div class="photo-title">${photos.url.split("/").pop()}</div> 
-                    <div class="photo-meta">socre: ${photos.score.toFixed(3)}</div> 
-                    <div class="photo-meta">score(test): ${((1 - Math.acos(photos.score) / Math.PI) * 100).toFixed(2)}%</div> 
-                    <div class="photo-meta">size: ${photos.size}MB</div>
+                    <div class="photo-meta">유사도: ${(customScore(photos.score) * 100).toFixed(2)}%</div> 
+                    <div class="photo-meta">용량: ${photos.size}MB</div>
                 </div>
             </div>
         `
@@ -297,6 +352,9 @@ function getLoginFormData() {
 async function handleLogin(e) {
     const result = await apiPost("/api/users/login", JSON.stringify(getLoginFormData()));
     localStorage.setItem("token", JSON.parse(result).accessToken);
+    document.getElementById("loginBtnContainer").style.display = "none";
+    document.getElementById("logoutBtnContainer").style.display = "flex";
+    document.getElementById("username").textContent = "환영합니다, " + JSON.parse(result).username;
     closeLoginModal();
 }
 
@@ -318,6 +376,12 @@ document
     .getElementById("loginModal")
     .querySelectorAll("input")
     .forEach((element) => element.addEventListener("input", updateLoginButtonState));
+
+function logout() {
+    localStorage.removeItem("token");
+    document.getElementById("loginBtnContainer").style.display = "flex";
+    document.getElementById("logoutBtnContainer").style.display = "none";
+}
 
 // Sign-up modal
 function openSignUpModal() {
@@ -342,7 +406,7 @@ function getSignUpFormData() {
 function updateSignUpButtonState(e) {
     // Sign-up modal : If the input password is not confirmed, deactivate the sign-up-related buttons
     let confirmed =
-        Object.entries(getSignUpFormData()).every((pair) => pair[0] === "verificationCode" || pair[1].trim().length > 0) &&
+        Object.entries(getSignUpFormData()).every((pair) => pair[1].trim().length > 0) &&
         document.getElementById("pwdInput").value === document.getElementById("pwdConfirmInput").value;
 
     let signUpButton = document.getElementById("signUpBtn");
@@ -373,8 +437,7 @@ async function sendEmailVerification() {
     sendCodeButton.disabled = true;
 
     try {
-        const result = await apiPost("/api/users/email-verification", JSON.stringify(getSignUpFormData())); // TODO: to be tested
-        console.log(JSON.parse(result).verificationCode);  // TODO
+        const result = await apiPost("/api/users/email-verification", JSON.stringify(getSignUpFormData()));
     } catch (e) {
         sendCodeButton.innerHTML = "오류. 다시 시도";
         sendCodeButton.disabled = false;
@@ -555,12 +618,16 @@ document.addEventListener("contextmenu", function (e) {
             return;
         }
         e.preventDefault();
-        showMenu(e.clientX, e.clientY, elem);
+        showMenu(e.pageX, e.pageY, elem);
     }
 });
 
 document.addEventListener("pointerdown", function (e) {
     if (e.target.closest(".photo-card") !== contextTarget && !e.target.closest("#customContextMenu")) hideMenu();
+});
+
+document.addEventListener("scroll", function (e) {
+    hideMenu();
 });
 
 document.addEventListener("keydown", function (e) {
@@ -591,5 +658,57 @@ contextMenu.addEventListener("click", async function (e) {
         console.error(e);
     } finally {
         hideMenu();
+    }
+});
+
+/* View Modal Logic */
+const viewModal = document.getElementById("viewModal");
+const viewModalImg = document.getElementById("viewModalImg");
+const viewModalTitle = document.getElementById("viewModalTitle");
+const viewModalMeta = document.getElementById("viewModalMeta");
+
+function openViewModal(card) {
+    const img = card.querySelector("img");
+    if (!img) return; // Should not happen based on requirements, but safety check
+
+    const title = card.querySelector(".photo-title")?.innerText || "No Title";
+    // Collect all meta info
+    const metaDivs = card.querySelectorAll(".photo-meta");
+    let metaHtml = "";
+    metaDivs.forEach(div => {
+        metaHtml += `<div>${div.innerText}</div>`;
+    });
+
+    viewModalImg.src = img.src;
+    viewModalTitle.innerText = title;
+    viewModalMeta.innerHTML = metaHtml;
+
+    viewModal.classList.add("active");
+}
+
+function closeViewModal() {
+    viewModal.classList.remove("active");
+    viewModalImg.src = ""; // Clear src
+}
+
+// Double click event for photo cards
+document.addEventListener("dblclick", function(e) {
+    const card = e.target.closest(".photo-card");
+    if (card) {
+        openViewModal(card);
+    }
+});
+
+// Close modal when clicking outside
+viewModal.addEventListener("click", function(e) {
+    if (e.target === viewModal) {
+        closeViewModal();
+    }
+});
+
+// Close on Escape key
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape" && viewModal.classList.contains("active")) {
+        closeViewModal();
     }
 });
