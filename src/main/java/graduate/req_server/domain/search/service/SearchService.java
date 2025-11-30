@@ -13,6 +13,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -27,13 +28,27 @@ public class SearchService {
     public SearchResponse searchByText(SearchRequest request) {
         log.debug("[SearchService] searchByText");
 
-        double minScore = 0.1;
-
         String userId = SecurityUtil.getCurrentUserId();
-        
+
         String query = translationService.translate(request.getQuery(), "auto", "en");
         log.info("translation result: {}", query);
+
         List<Float> vector = aiClient.textToVector(query);
+        return getSearchResponse(userId, vector);
+    }
+
+    public SearchResponse searchByImage(MultipartFile image) {
+        log.debug("[SearchService] searchByImage");
+
+        String userId = SecurityUtil.getCurrentUserId();
+
+        List<Float> vector = aiClient.imageToVector(image);
+        return getSearchResponse(userId, vector);
+    }
+
+
+    private SearchResponse getSearchResponse(String userId, List<Float> vector) {
+        double minScore = 0.1;
         List<ScoredVectorWithUnsignedIndices> matches = pineconeClient.queryTopKWithUserId(vector, userId);
 
         List<PhotoInfo> photos = matches.stream()
