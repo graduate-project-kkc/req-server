@@ -16,7 +16,7 @@ const searchResultsData = {
 };
 
 function customScore(v) {
-    let sigmoid = (x) => (1 / (1 + Math.exp(-x)));
+    let sigmoid = (x) => 1 / (1 + Math.exp(-x));
     const amplifier = 5;
     const scoreMin = sigmoid(-amplifier);
     const scoreMax = sigmoid(amplifier);
@@ -345,7 +345,7 @@ function getLoginFormData() {
     let obj = {};
     formData.forEach((value, key) => {
         obj[key] = value;
-    }); 
+    });
     return obj;
 }
 
@@ -361,9 +361,7 @@ async function handleLogin(e) {
 function updateLoginButtonState(e) {
     // Login modal : Enable login button only when the user filled both input boxes
     let loginBtn = document.getElementById("loginBtn");
-    if (
-        Object.values(getLoginFormData()).every((value) => value.trim().length > 0)
-    ) {
+    if (Object.values(getLoginFormData()).every((value) => value.trim().length > 0)) {
         loginBtn.disabled = false;
         loginBtn.classList.add("primary");
     } else {
@@ -399,8 +397,8 @@ function getSignUpFormData() {
     let obj = {};
     formData.forEach((value, key) => {
         obj[key] = value;
-    }); 
-    return obj; 
+    });
+    return obj;
 }
 
 function updateSignUpButtonState(e) {
@@ -425,9 +423,7 @@ document
     .getElementById("signUpModal")
     .querySelectorAll("input")
     .forEach((element) => {
-        if (!element.hidden) {
-            element.addEventListener("input", updateSignUpButtonState);
-        }
+        element.addEventListener("input", updateSignUpButtonState);
     });
 
 async function sendEmailVerification() {
@@ -467,7 +463,7 @@ async function sendEmailVerification() {
 async function handleSignUp() {
     let success = null;
     try {
-        const result = await apiPost("/api/users/signup", getSignUpFormData());
+        const result = await apiPost("/api/users/signup", JSON.stringify(getSignUpFormData()));
         console.log(result); // TODO
         success = true;
     } catch (e) {
@@ -649,7 +645,7 @@ contextMenu.addEventListener("click", async function (e) {
             const tempLink = document.createElement("a");
             tempLink.style.display = "none";
             tempLink.href = img_src;
-            tempLink.download = img_src.split('/').pop().split('?')[0] || "image";
+            tempLink.download = img_src.split("/").pop().split("?")[0] || "image";
             document.body.appendChild(tempLink);
             tempLink.click();
             document.body.removeChild(tempLink);
@@ -675,7 +671,7 @@ function openViewModal(card) {
     // Collect all meta info
     const metaDivs = card.querySelectorAll(".photo-meta");
     let metaHtml = "";
-    metaDivs.forEach(div => {
+    metaDivs.forEach((div) => {
         metaHtml += `<div>${div.innerText}</div>`;
     });
 
@@ -692,7 +688,7 @@ function closeViewModal() {
 }
 
 // Double click event for photo cards
-document.addEventListener("dblclick", function(e) {
+document.addEventListener("dblclick", function (e) {
     const card = e.target.closest(".photo-card");
     if (card) {
         openViewModal(card);
@@ -700,14 +696,14 @@ document.addEventListener("dblclick", function(e) {
 });
 
 // Close modal when clicking outside
-viewModal.addEventListener("click", function(e) {
+viewModal.addEventListener("click", function (e) {
     if (e.target === viewModal) {
         closeViewModal();
     }
 });
 
 // Close on Escape key
-document.addEventListener("keydown", function(e) {
+document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && viewModal.classList.contains("active")) {
         closeViewModal();
     }
