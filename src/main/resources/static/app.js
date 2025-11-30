@@ -15,6 +15,14 @@ const searchResultsData = {
     ],
 };
 
+function customScore(v) {
+    let sigmoid = (x) => (1 / (1 + Math.exp(-x)));
+    const amplifier = 5;
+    const scoreMin = sigmoid(-amplifier);
+    const scoreMax = sigmoid(amplifier);
+    return (sigmoid(v * amplifier) - scoreMin) / (scoreMax - scoreMin);
+}
+
 let tasks = {};
 let taskGlobalId = 0;
 const tooltip = document.querySelector(".tooltiptext");
@@ -281,9 +289,8 @@ async function performSearch() {
                 <img class="photo-img" src=${photos.url} alt="photo">
                 <div class="photo-info">
                     <div class="photo-title">${photos.url.split("/").pop()}</div> 
-                    <div class="photo-meta">socre: ${photos.score.toFixed(3)}</div> 
-                    <div class="photo-meta">score(test): ${((1 - Math.acos(photos.score) / Math.PI) * 100).toFixed(2)}%</div> 
-                    <div class="photo-meta">size: ${photos.size}MB</div>
+                    <div class="photo-meta">유사도: ${(customScore(photos.score) * 100).toFixed(2)}%</div> 
+                    <div class="photo-meta">용량: ${photos.size}MB</div>
                 </div>
             </div>
         `
