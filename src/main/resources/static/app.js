@@ -406,13 +406,13 @@ function getSignUpFormData() {
 function updateSignUpButtonState(e) {
     // Sign-up modal : If the input password is not confirmed, deactivate the sign-up-related buttons
     let confirmed =
-        Object.entries(getSignUpFormData()).every((pair) => pair[1].trim().length > 0) &&
+        Object.entries(getSignUpFormData()).every((pair) => pair[0] === "verificationCode" || pair[1].trim().length > 0) &&
         document.getElementById("pwdInput").value === document.getElementById("pwdConfirmInput").value;
 
     let signUpButton = document.getElementById("signUpBtn");
 
     document.getElementById("sendCodeBtn").disabled = !confirmed || document.getElementById("signUpModal").emailSent;
-    if (confirmed) {
+    if (confirmed && document.getElementById("codeInput").value.trim().length > 0) {
         signUpButton.disabled = false;
         signUpButton.classList.add("primary");
     } else {
