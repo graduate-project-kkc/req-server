@@ -240,7 +240,7 @@ async function performSearch(img_file) {
         }
         console.log(img_file);
 
-        formData.append("files", img_file);
+        formData.append("image", img_file);
 
         updateTaskStatus(taskId, "processing");
         try {
