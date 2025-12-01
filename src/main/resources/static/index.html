@@ -59,13 +59,13 @@
                 <button class="search-btn" onclick="performSearch()">검색</button>
             </div>
 
-            <div class="upload-area" onclick="document.getElementById('fileInput').click()"
+            <div class="upload-area" onclick="document.getElementById('searchFileInput').click()"
                 ondrop="handleSearchDrop(event)" ondragover="handleDragOver(event)"
                 ondragleave="handleDragLeave(event)">
                 <div class="upload-icon">📁</div>
                 <div class="upload-text">또는 사진을 드래그하거나 클릭하여 검색</div>
                 <div class="upload-subtext">JPG, PNG, GIF 파일을 지원합니다</div>
-                <input type="file" id="fileInput" class="file-input" accept="image/*"
+                <input type="file" id="searchFileInput" class="file-input" accept="image/*"
                     onchange="handleSearchFileSelect(event)">
                 <button class="upload-btn">파일 선택</button>
             </div>

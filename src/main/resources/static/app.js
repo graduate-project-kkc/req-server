@@ -456,7 +456,6 @@ async function handleSignUp() {
     let success = null;
     try {
         const result = await apiPost("/api/users/signup", JSON.stringify(getSignUpFormData()));
-        console.log(result); // TODO
         success = true;
     } catch (e) {
         console.log(e);
@@ -700,3 +699,5 @@ document.addEventListener("keydown", function (e) {
         closeViewModal();
     }
 });
+
+updateLoginState();
