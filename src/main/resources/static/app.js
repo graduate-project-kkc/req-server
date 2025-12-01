@@ -1,5 +1,3 @@
-localStorage.removeItem("accessToken");
-
 // Sample search results data
 const searchResultsData = {
     "강아지": [
@@ -166,7 +164,7 @@ function handleDragLeave(e) {
     e.currentTarget.classList.remove("dragover");
 }
 
-const fileNameDisplayLen = 15;
+const taskNameDisplayLen = 15;
 
 function handleDrop(e) {
     e.preventDefault();
@@ -192,7 +190,7 @@ async function handleFiles(files) {
             const taskId = "task-" + taskGlobalId++;
             taskIds.push(taskId);
 
-            addTask(taskId, fileName.length > fileNameDisplayLen ? fileName.slice(0, fileNameDisplayLen) + "..." : fileName);
+            addTask(taskId, fileName.length > taskNameDisplayLen ? fileName.slice(0, taskNameDisplayLen) + "..." : fileName);
             if (files[i].fileSize > 13 << 19) {
                 // The image is too big (>= 7.5MB)
                 updateTaskStatus(taskId, "error", "파일이 너무 큽니다.");
@@ -230,57 +228,55 @@ function handleSearchFileSelect(e) {
 async function handleSearchFiles(file) {
     console.log(file);
     if (file) {
-        const formData = new FormData();
-        let taskIds = [];
-
-        const fileName = file.name;
-        const taskId = "task-" + taskGlobalId++;
-        taskIds.push(taskId);
-
-        addTask(taskId, fileName.length > fileNameDisplayLen ? fileName.slice(0, fileNameDisplayLen) + "..." : fileName);
-        if (file.fileSize > 13 << 19) {
-            // The image is too big (>= 7.5MB)
-            updateTaskStatus(taskId, "error", "파일이 너무 큽니다.");
-            return;
-        }
-
-        console.log(file);
-
-        formData.append("files", file); // files가 key
-        // const promise = apiPost("/api/images", formData);
-
-        const promise = (async () => {})();
-        // TODO - new search API
-
-        taskIds.forEach((id_) => updateTaskStatus(id_, "processing"));
-        try {
-            const results = await promise;
-            taskIds.forEach((id_) => updateTaskStatus(id_, "done"));
-            return results;
-        } catch (error) {
-            taskIds.forEach((id_) => updateTaskStatus(id_, "error", "서버 통신 오류 : " + error));
-        }
+        performSearch(file);
     }
 }
 
 // Search functionality
-async function performSearch() {
+async function performSearch(img_file) {
     const query = document.getElementById("searchInput").value.trim().toLowerCase();
     const resultsContainer = document.getElementById("searchResults");
+    let results = null;
+    const taskId = "task-" + taskGlobalId++;
 
-    if (!query) {
+    if (img_file) {
+        const formData = new FormData();
+
+        const fileName = img_file.name;
+
+        addTask(taskId, "검색 : " + (fileName.length > taskNameDisplayLen ? fileName.slice(0, taskNameDisplayLen) + "..." : fileName));
+        if (img_file.fileSize > 13 << 19) {
+            // The image is too big (>= 7.5MB)
+            updateTaskStatus(taskId, "error", "파일이 너무 큽니다.");
+            return;
+        }
+        console.log(img_file);
+
+        formData.append("files", img_file);
+
+        updateTaskStatus(taskId, "processing");
+        try {
+            results = await apiPost("/api/search/image", formData, "multipart/form-data");
+            updateTaskStatus(taskId, "done");
+            document.getElementById("searchMessage").textContent = "업로드한 사진의 검색 결과";
+        } catch (error) {
+            updateTaskStatus(taskId, "error", "서버 통신 오류 : " + error);
+        }
+    } else if (query) {
+        // Find matching results
+        addTask(taskId, "검색 : " + (query.length > taskNameDisplayLen ? query.slice(0, taskNameDisplayLen) + "..." : query));
+        try {
+            results = await apiGet("/api/search/text?query=" + query);
+            updateTaskStatus(taskId, "done");
+            document.getElementById("searchMessage").textContent = "검색 결과 : " + results.query;
+        } catch (error) {
+            updateTaskStatus(taskId, "error", "서버 통신 오류 : " + error);
+        }
+    } else {
         // Show default photos
         resultsContainer.innerHTML = renderDefaultPhtos();
         return;
     }
-
-    // Find matching results
-    const results = await apiGet("/api/search?query=" + query);
-    console.log(results);
-    console.log(JSON.stringify(results));
-
-    // TODO : Get the translated text of query
-    // and display it to the user
 
     // Display results
     if (results.photos.length > 0) {
@@ -327,10 +323,6 @@ async function loadPhotoStats() {
     }
 }
 
-// TODO
-// - 로그인/회원가입 시 return값 이용
-//   - 로그인 후 세션 관리?
-
 // Login modal
 function openLoginModal() {
     document.getElementById("signUpModal").classList.remove("active");
@@ -354,9 +346,8 @@ function getLoginFormData() {
 async function handleLogin(e) {
     const result = await apiPost("/api/users/login", JSON.stringify(getLoginFormData()));
     localStorage.setItem("accessToken", result.accessToken);
-    document.getElementById("loginBtnContainer").style.display = "none";
-    document.getElementById("logoutBtnContainer").style.display = "flex";
-    document.getElementById("username").textContent = "환영합니다, " + result.username;
+    localStorage.setItem("username", result.username);
+    updateLoginState();
     closeLoginModal();
 }
 
@@ -377,10 +368,21 @@ document
     .querySelectorAll("input")
     .forEach((element) => element.addEventListener("input", updateLoginButtonState));
 
+function updateLoginState() {
+    if (localStorage.getItem("accessToken")) {
+        document.getElementById("loginBtnContainer").style.display = "none";
+        document.getElementById("logoutBtnContainer").style.display = "flex";
+        document.getElementById("username").textContent = "환영합니다, " + localStorage.getItem("username");
+    } else {
+        document.getElementById("loginBtnContainer").style.display = "flex";
+        document.getElementById("logoutBtnContainer").style.display = "none";
+    }
+}
+
 function logout() {
-    localStorage.removeItem("token");
-    document.getElementById("loginBtnContainer").style.display = "flex";
-    document.getElementById("logoutBtnContainer").style.display = "none";
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("username");
+    updateLoginState();
 }
 
 // Sign-up modal

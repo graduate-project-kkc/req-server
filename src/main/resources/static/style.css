@@ -182,6 +182,12 @@ body {
     margin-bottom: 1rem;
 }
 
+.search-message {
+    color: darkblue;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
 .search-btn {
     background: #3b82f6;
     color: white;
