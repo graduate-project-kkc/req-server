@@ -201,7 +201,7 @@ async function handleFiles(files) {
             formData.append("files", files[i]); // files가 key
         }
 
-        const promise = apiPost("/api/images", formData, "multipart/form-data");
+        const promise = apiPostFile("/api/images", formData);
         taskIds.forEach((id_) => updateTaskStatus(id_, "processing"));
         try {
             const results = await promise;
@@ -256,7 +256,7 @@ async function performSearch(img_file) {
 
         updateTaskStatus(taskId, "processing");
         try {
-            results = await apiPost("/api/search/image", formData, "multipart/form-data");
+            results = await apiPostFile("/api/search/image", formData);
             updateTaskStatus(taskId, "done");
             document.getElementById("searchMessage").textContent = "업로드한 사진의 검색 결과";
         } catch (error) {
