@@ -1,5 +1,3 @@
-localStorage.removeItem("accessToken");
-
 // Sample search results data
 const searchResultsData = {
     "강아지": [
@@ -327,10 +325,6 @@ async function loadPhotoStats() {
     }
 }
 
-// TODO
-// - 로그인/회원가입 시 return값 이용
-//   - 로그인 후 세션 관리?
-
 // Login modal
 function openLoginModal() {
     document.getElementById("signUpModal").classList.remove("active");
@@ -354,9 +348,8 @@ function getLoginFormData() {
 async function handleLogin(e) {
     const result = await apiPost("/api/users/login", JSON.stringify(getLoginFormData()));
     localStorage.setItem("accessToken", result.accessToken);
-    document.getElementById("loginBtnContainer").style.display = "none";
-    document.getElementById("logoutBtnContainer").style.display = "flex";
-    document.getElementById("username").textContent = "환영합니다, " + result.username;
+    localStorage.setItem("username", result.username);
+    updateLoginState();
     closeLoginModal();
 }
 
@@ -377,10 +370,21 @@ document
     .querySelectorAll("input")
     .forEach((element) => element.addEventListener("input", updateLoginButtonState));
 
+function updateLoginState() {
+    if (localStorage.getItem("accessToken")) {
+        document.getElementById("loginBtnContainer").style.display = "none";
+        document.getElementById("logoutBtnContainer").style.display = "flex";
+        document.getElementById("username").textContent = "환영합니다, " + localStorage.getItem("username");
+    } else {
+        document.getElementById("loginBtnContainer").style.display = "flex";
+        document.getElementById("logoutBtnContainer").style.display = "none";
+    }
+}
+
 function logout() {
-    localStorage.removeItem("token");
-    document.getElementById("loginBtnContainer").style.display = "flex";
-    document.getElementById("logoutBtnContainer").style.display = "none";
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("username");
+    updateLoginState();
 }
 
 // Sign-up modal
