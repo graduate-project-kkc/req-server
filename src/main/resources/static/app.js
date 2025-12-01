@@ -279,6 +279,7 @@ async function performSearch() {
 
     // TODO : Get the translated text of query
     // and display it to the user
+    document.getElementById("searchMessage").textContent = "검색 결과 : " + results.query;
 
     // Display results
     if (results.photos.length > 0) {
