@@ -37,6 +37,9 @@ setInterval(() => {
             tooltip.style.display = "none";
             tooltip.innerText = "";
         }
+    } else {
+        tooltip.style.display = "none";
+        tooltip.innerText = "";
     }
 }, 1);
 
@@ -72,8 +75,8 @@ function renderTasks() {
         status.innerText = capitalize(t.status);
 
         status.addEventListener("mousemove", (e) => {
-            tooltip.style.right = window.innerWidth - e.pageX - 10 + "px"; // Adjust offset as needed
-            tooltip.style.bottom = window.innerHeight - e.pageY - 10 + "px"; // Adjust offset as needed
+            tooltip.style.right = window.innerWidth - e.pageX + 10 + "px"; // Adjust offset as needed
+            tooltip.style.bottom = window.innerHeight - e.pageY + "px"; // Adjust offset as needed
         });
 
         status.addEventListener("mouseenter", () => {
