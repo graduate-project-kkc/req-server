@@ -72,8 +72,8 @@ function renderTasks() {
         status.innerText = capitalize(t.status);
 
         status.addEventListener("mousemove", (e) => {
-            tooltip.style.left = e.pageX + 10 + "px"; // Adjust offset as needed
-            tooltip.style.top = e.pageY + 10 + "px"; // Adjust offset as needed
+            tooltip.style.right = window.innerWidth - e.pageX - 10 + "px"; // Adjust offset as needed
+            tooltip.style.bottom = window.innerHeight - e.pageY - 10 + "px"; // Adjust offset as needed
         });
 
         status.addEventListener("mouseenter", () => {
@@ -119,21 +119,6 @@ function updateTaskStatus(taskId, status, desc) {
     tasks[taskId].status = status;
     tasks[taskId].desc = desc;
     renderTasks();
-}
-
-/* 데모용: 랜덤 작업 생성 & 상태 자동 변경 */
-function demoCreateTask() {
-    const id = Math.random().toString(36).slice(2, 7);
-    const tid = "task-" + id;
-    addTask(tid, "아무개 이미지 " + id);
-
-    // 상태 변화를 데모로 보여주기 위한 흐름
-    setTimeout(() => updateTaskStatus(tid, "processing"), 3000);
-    if (Math.random() < 0.5) {
-        setTimeout(() => updateTaskStatus(tid, "error"), 7000);
-    } else {
-        setTimeout(() => updateTaskStatus(tid, "done"), 7000);
-    }
 }
 
 // Tab switching
