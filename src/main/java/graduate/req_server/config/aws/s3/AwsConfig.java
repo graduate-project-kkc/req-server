@@ -9,6 +9,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Utilities;
+import software.amazon.awssdk.services.translate.TranslateClient;
 
 @Configuration
 public class AwsConfig {
@@ -53,5 +54,13 @@ public class AwsConfig {
     @Bean
     public S3Utilities s3Utilities(S3Client s3Client) {
         return s3Client.utilities();
+    }
+
+    @Bean
+    public TranslateClient translateClient() {
+        return TranslateClient.builder()
+                .region(Region.of(region))
+                .credentialsProvider(customAwsCredentialsProvider())
+                .build();
     }
 }

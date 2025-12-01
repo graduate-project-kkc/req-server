@@ -9,4 +9,5 @@ import lombok.Getter;
 public class SearchResponse {
 
     private List<PhotoInfo> photos;
+    private String query;
 }
