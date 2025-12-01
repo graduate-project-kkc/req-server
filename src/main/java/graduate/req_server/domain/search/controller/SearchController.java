@@ -7,9 +7,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/search")
@@ -19,10 +21,17 @@ public class SearchController {
 
     private final SearchService searchService;
 
-    @GetMapping
+    @GetMapping("/text")
     public ResponseEntity<SearchResponse> search(@RequestParam String query) {
-        log.debug("[SearchController] search");
+        log.debug("[SearchController] search/text");
 
         return ResponseEntity.ok(searchService.searchByText(new SearchRequest(query)));
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<SearchResponse> search(MultipartFile image) {
+        log.debug("[SearchController] search/image");
+
+        return ResponseEntity.ok(searchService.searchByImage(image));
     }
 }

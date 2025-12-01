@@ -39,6 +39,7 @@ ai:
   server:
     base-url: ${AI_SERVER_URL}
     image-to-vector-endpoint: ${ITV_ENDPOINT}
+    search-image-to-vector-endpoint: ${SEARCH_ITV_ENDPOINT}
     text-to-vector-endpoint: ${TTV_ENDPOINT}
 
 pinecone:
