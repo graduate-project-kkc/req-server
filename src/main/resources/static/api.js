@@ -49,7 +49,7 @@ async function apiPostFile(endpoint, data) {
         body: data,
     };
     if (localStorage.getItem("accessToken")) {
-        init.headers["Authorization"] = "Bearer " + localStorage.getItem("accessToken");
+        init.headers = { "Authorization": "Bearer " + localStorage.getItem("accessToken") };
     }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, init);

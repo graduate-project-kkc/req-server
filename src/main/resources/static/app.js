@@ -208,7 +208,7 @@ async function handleFiles(files) {
             taskIds.forEach((id_) => updateTaskStatus(id_, "done"));
             return results;
         } catch (error) {
-            taskIds.forEach((id_) => updateTaskStatus(id_, "error", "서버 통신 오류 : " + error));
+            taskIds.forEach((id_) => updateTaskStatus(id_, "error", "통신 에러 : " + error));
         }
     }
 }
