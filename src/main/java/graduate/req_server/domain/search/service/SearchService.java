@@ -40,7 +40,7 @@ public class SearchService {
         log.info("translation result: {}", query);
 
         List<Float> vector = aiClient.textToVector(query);
-        return getSearchResponse(userId, vector);
+        return getSearchResponse(userId, vector, query);
     }
 
     public SearchResponse searchByImage(MultipartFile image) {
@@ -49,10 +49,10 @@ public class SearchService {
         String userId = SecurityUtil.getCurrentUserId();
 
         List<Float> vector = aiClient.imageToVector(image);
-        return getSearchResponse(userId, vector);
+        return getSearchResponse(userId, vector, "");
     }
 
-    private SearchResponse getSearchResponse(String userId, List<Float> vector) {
+    private SearchResponse getSearchResponse(String userId, List<Float> vector, String query) {
         double minScore = 0.1;
         List<ScoredVectorWithUnsignedIndices> matches = pineconeClient.queryTopKWithUserId(vector, userId);
 
@@ -87,6 +87,6 @@ public class SearchService {
                             .build();
                 }).toList();
 
-        return new SearchResponse(photos);
+        return new SearchResponse(photos, query);
     }
 }
