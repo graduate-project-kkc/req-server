@@ -1,6 +1,7 @@
 package graduate.req_server.domain.search.service;
 
 import graduate.req_server.domain.search.dto.response.StatusResponse;
+import graduate.req_server.util.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,20 +24,20 @@ public class StatusService {
     private final S3Client s3Client;
 
 
-    public StatusResponse getStats(String prefix) {
+    public StatusResponse getStats() {
         log.debug("[StatusService] getStats");
         long totalSize = 0L;
         int fileCount = 0;
         String continuationToken = null;
 
+        String prefix = SecurityUtil.getCurrentUserId() + "/";
         ListObjectsV2Response result;
         do {
             ListObjectsV2Request request = ListObjectsV2Request.builder()
                     .bucket(bucket)
-                    //.prefix(prefix+"/")
+                    .prefix(prefix)
                     .continuationToken(continuationToken)
                     .build();
-
 
             result = s3Client.listObjectsV2(request);
             List<S3Object> contents = result.contents();
@@ -47,7 +48,6 @@ public class StatusService {
                 }
                 totalSize += object.size(); // bytes
                 fileCount++;
-                System.out.println(object.key()+":"+object.size());
             }
 
             continuationToken = result.nextContinuationToken();
@@ -62,6 +62,4 @@ public class StatusService {
         char unit = "KMGTPE".charAt(exp - 1);
         return String.format("%.1f %sB", bytes / Math.pow(1024, exp), unit);
     }
-
-    //public record PhotoStats(int count, long totalBytes) {}
 }
