@@ -5,6 +5,7 @@ import graduate.req_server.common.exception.ErrorCode;
 import graduate.req_server.domain.auth.dto.request.EmailVerificationRequest;
 import graduate.req_server.domain.auth.dto.request.LoginRequest;
 import graduate.req_server.domain.auth.dto.request.SignUpRequest;
+import graduate.req_server.domain.auth.dto.response.LoginResponse;
 import graduate.req_server.domain.auth.entity.EmailVerification;
 import graduate.req_server.domain.auth.entity.User;
 import graduate.req_server.domain.auth.repository.EmailVerificationRepository;
@@ -75,7 +76,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public String login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -83,7 +84,7 @@ public class UserService {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
-        return jwtTokenProvider.createToken(user.getId());
+        return new LoginResponse(jwtTokenProvider.createToken(user.getId()), user.getUsername());
     }
 
     private String createVerificationCode() {
