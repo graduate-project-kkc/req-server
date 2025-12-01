@@ -213,10 +213,10 @@ function handleSearchFileSelect(e) {
     handleSearchFiles(file);
 }
 
-async function handleSearchFiles(file) {
-    console.log(file);
-    if (file) {
-        performSearch(file);
+async function handleSearchFiles(files) {
+    console.log(files);
+    if (files && files.length > 0) {
+        performSearch(files[0]);
     }
 }
 
