@@ -24,8 +24,7 @@ public class PineconeClient {
     public List<ScoredVectorWithUnsignedIndices> queryTopKWithScore(List<Float> vector) {
         QueryResponseWithUnsignedIndices response = pineconeIndex.queryByVector(
                 topK,
-                vector
-        );
+                vector);
 
         return Optional.ofNullable(response)
                 .map(QueryResponseWithUnsignedIndices::getMatchesList)
@@ -36,15 +35,14 @@ public class PineconeClient {
         QueryResponseWithUnsignedIndices response = pineconeIndex.queryByVector(
                 topK,
                 vector,
-                userId
-        );
+                userId);
 
         return Optional.ofNullable(response)
                 .map(QueryResponseWithUnsignedIndices::getMatchesList)
                 .orElse(Collections.emptyList());
     }
 
-    public void deleteVector(String id) {
-        pineconeIndex.deleteByIds(List.of(id));
+    public void deleteVector(String id, String namespace) {
+        pineconeIndex.deleteByIds(List.of(id), namespace);
     }
 }
