@@ -630,19 +630,29 @@ contextMenu.addEventListener("click", async function (e) {
 
     const img_src = contextTarget.firstElementChild.src;
     const action = item.dataset.action;
+    const imgId = img_src.split("/").pop().split("?")[0];
 
     try {
         if (action === "save") {
             const tempLink = document.createElement("a");
             tempLink.style.display = "none";
             tempLink.href = img_src;
-            tempLink.download = img_src.split("/").pop().split("?")[0] || "image";
+            tempLink.download = imgId;
             document.body.appendChild(tempLink);
             tempLink.click();
             document.body.removeChild(tempLink);
+        } else if (action === "delete") {
+            const response = await fetch(`/api/images/${imgId}`, {
+                method: "DELETE",
+            });
+            if (response.ok) {
+                delete recentSearchPhotos[img_src];
+                const card = contextTarget.closest(".photo-card");
+                card.remove();
+            }
         }
     } catch (e) {
-        console.error(e);
+        console.error("사진 작업 에러 : " + e);
     } finally {
         hideMenu();
     }
