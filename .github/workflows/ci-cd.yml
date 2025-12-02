@@ -70,9 +70,15 @@ jobs:
             # Run new container with your env file
             docker run -d --name graduate \
               -p 8080:8080 \
+              -e DD_AGENT_HOST=172.17.0.1 \
+              -e DD_SERVICE=req-server \
+              -e DD_ENV=prod \
+              -e DD_LOGS_INJECTION=true \
+              -e DD_PROFILING_ENABLED=true \
+              -e DD_VERSION=${{ github.sha }} \
               --env-file /home/${{ secrets.EC2_USER }}/bzun.env \
               ${{ secrets.DOCKERHUB_USERNAME }}/graduate:latest
 
-            # Show the last 20 log lines
+            sleep 5
             docker logs --tail 20 graduate
           EOF
