@@ -644,6 +644,7 @@ contextMenu.addEventListener("click", async function (e) {
         } else if (action === "delete") {
             const response = await fetch(`/api/images/${recentSearchPhotos[img_src].id}`, {
                 method: "DELETE",
+                headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
             });
             if (response.ok) {
                 delete recentSearchPhotos[img_src];
