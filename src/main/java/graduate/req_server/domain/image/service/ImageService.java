@@ -1,5 +1,7 @@
 package graduate.req_server.domain.image.service;
 
+import graduate.req_server.common.exception.CustomException;
+import graduate.req_server.common.exception.ErrorCode;
 import graduate.req_server.domain.image.dto.request.ImageRequest;
 import graduate.req_server.domain.photo.entity.Photo;
 import graduate.req_server.domain.photo.repository.PhotoRepository;
@@ -15,6 +17,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -26,6 +29,7 @@ public class ImageService {
     private final AiClient aiClient;
     private final PhotoRepository photoRepository;
 
+    @Transactional
     public UploadResponse uploadAndProcess(ImageRequest request) {
         String userId = SecurityUtil.getCurrentUserId();
 
@@ -48,5 +52,15 @@ public class ImageService {
         }
 
         return aiClient.vectorizeAndStore(keys, userId);
+    }
+
+    @Transactional
+    public void deleteImage(String id) {
+        Photo photo = photoRepository.findByIdAndUserId(id, SecurityUtil.getCurrentUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND));
+
+        s3Service.deleteFile(photo.getS3Key());
+
+        photoRepository.delete(photo);
     }
 }

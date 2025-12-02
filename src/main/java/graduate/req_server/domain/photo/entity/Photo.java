@@ -1,9 +1,8 @@
 package graduate.req_server.domain.photo.entity;
 
+import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -19,8 +18,9 @@ import lombok.NoArgsConstructor;
 public class Photo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Tsid
+    @Column(length = 13)
+    private String id;
 
     @Column(nullable = false)
     private String userId;

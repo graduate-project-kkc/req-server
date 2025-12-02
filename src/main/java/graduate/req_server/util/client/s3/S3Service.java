@@ -47,22 +47,26 @@ public class S3Service {
         return key;
     }
 
+    public void deleteFile(String key) {
+        s3Client.deleteObject(builder -> builder.bucket(properties.getBucket()).key(key));
+    }
+
     public String getFileUrl(String key) {
         return s3Utilities.getUrl(
                 GetUrlRequest.builder()
                         .bucket(properties.getBucket())
                         .key(key)
                         .build()
-        ).toExternalForm();
+            ).toExternalForm();
     }
 
     public double getFileSize(String key) {
         long bytes;
         try {
             bytes = s3Client.headObject(HeadObjectRequest.builder()
-                            .bucket(properties.getBucket())
-                            .key(key)
-                            .build())
+                    .bucket(properties.getBucket())
+                    .key(key)
+                    .build())
                     .contentLength();
         } catch (NoSuchKeyException e) {
             bytes = 0L;

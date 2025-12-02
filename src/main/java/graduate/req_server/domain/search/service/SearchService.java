@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -31,6 +32,7 @@ public class SearchService {
     private final TranslationService translationService;
     private final PhotoRepository photoRepository;
 
+    @Transactional(readOnly = true)
     public SearchResponse searchByText(SearchRequest request) {
         log.debug("[SearchService] searchByText");
 
@@ -48,6 +50,7 @@ public class SearchService {
         return getSearchResponse(userId, vector, query);
     }
 
+    @Transactional(readOnly = true)
     public SearchResponse searchByImage(MultipartFile image) {
         log.debug("[SearchService] searchByImage");
 
@@ -79,11 +82,13 @@ public class SearchService {
                     double size = s3Service.getFileSize(id);
 
                     Photo photo = photoMap.get(id);
+                    String photoId = photo != null ? photo.getId() : null;
                     String originalFilename = photo != null ? photo.getOriginalFilename() : null;
                     String takenDate = photo != null && photo.getTakenDate() != null ? photo.getTakenDate().toString()
                             : null;
 
                     return PhotoInfo.builder()
+                            .id(photoId)
                             .url(url)
                             .size(size)
                             .score(score)

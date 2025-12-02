@@ -14,6 +14,7 @@ public enum ErrorCode {
 
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다."),
     EMPTY_FILE(HttpStatus.BAD_REQUEST, "파일이 비어있습니다."),
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 이미지입니다"),
 
     VERIFICATION_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "인증번호가 일치하지 않습니다."),
     VERIFICATION_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "이메일 인증 정보가 존재하지 않습니다."),
