@@ -43,4 +43,8 @@ public class PineconeClient {
                 .map(QueryResponseWithUnsignedIndices::getMatchesList)
                 .orElse(Collections.emptyList());
     }
+
+    public void deleteVector(String id) {
+        pineconeIndex.deleteByIds(List.of(id));
+    }
 }

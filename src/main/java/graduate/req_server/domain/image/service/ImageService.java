@@ -7,6 +7,7 @@ import graduate.req_server.domain.photo.entity.Photo;
 import graduate.req_server.domain.photo.repository.PhotoRepository;
 import graduate.req_server.util.client.ai.AiClient;
 import graduate.req_server.util.client.ai.dto.UploadResponse;
+import graduate.req_server.util.client.pinecone.PineconeClient;
 import graduate.req_server.util.client.s3.S3Service;
 import graduate.req_server.util.file.MetadataExtractorUtil;
 import graduate.req_server.util.file.MultipartUtils;
@@ -28,6 +29,7 @@ public class ImageService {
     private final S3Service s3Service;
     private final AiClient aiClient;
     private final PhotoRepository photoRepository;
+    private final PineconeClient pineconeClient;
 
     @Transactional
     public UploadResponse uploadAndProcess(ImageRequest request) {
@@ -60,6 +62,7 @@ public class ImageService {
                 .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND));
 
         s3Service.deleteFile(photo.getS3Key());
+        pineconeClient.deleteVector(photo.getS3Key());
 
         photoRepository.delete(photo);
     }
