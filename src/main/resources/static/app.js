@@ -637,12 +637,12 @@ contextMenu.addEventListener("click", async function (e) {
             const tempLink = document.createElement("a");
             tempLink.style.display = "none";
             tempLink.href = img_src;
-            tempLink.download = imgId;
+            tempLink.download = recentSearchPhotos[img_src].originalFilename;
             document.body.appendChild(tempLink);
             tempLink.click();
             document.body.removeChild(tempLink);
         } else if (action === "delete") {
-            const response = await fetch(`/api/images/${imgId}`, {
+            const response = await fetch(`/api/images/${recentSearchPhotos[img_src].id}`, {
                 method: "DELETE",
             });
             if (response.ok) {
@@ -692,8 +692,8 @@ function openViewModal(card) {
         <div class="photo-meta">${photo.size}MB</div>
     </div>
     <div class="photo-info">
-        <div class="photo-subtitle">올린 날짜</div>
-        <div class="photo-meta">${photo.takenDate}</div>
+        <div class="photo-subtitle">촬영 날짜</div>
+        <div class="photo-meta">${new Date(photo.takenDate).toLocaleDateString()}</div>
     </div>
     `;
     };
