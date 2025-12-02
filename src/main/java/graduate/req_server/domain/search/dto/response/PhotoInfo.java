@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public class PhotoInfo {
 
+    private final String id;
     private final String url;
     private final double size;
     private final double score;
@@ -13,7 +14,8 @@ public class PhotoInfo {
     private final String takenDate;
 
     @Builder
-    private PhotoInfo(String url, double size, double score, String originalFilename, String takenDate) {
+    private PhotoInfo(String id, String url, double size, double score, String originalFilename, String takenDate) {
+        this.id = id;
         this.url = url;
         this.size = size;
         this.score = score;
