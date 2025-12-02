@@ -96,6 +96,12 @@ function renderTasks() {
                 delete tasks[id];
                 renderTasks();
             });
+            if (t.status === "done") {
+                setTimeout(() => {
+                    delete tasks[id];
+                    renderTasks();
+                }, 5000);
+            }
         } else {
             closeBtn.className = "loading-spinner";
         }
@@ -138,7 +144,6 @@ function switchTab(tab) {
     if (tab === "search") {
         console.log("loadPhothoStatus");
         loadPhotoStats(); // 통계 API 요청
-        // performSearch();
     }
 }
 
@@ -168,10 +173,8 @@ function handleFileSelect(e) {
 
 async function handleFiles(files) {
     if (files.length > 0) {
-        //alert(`${files.length}개의 파일이 선택되었습니다. 실제 서비스에서는 서버로 업로드됩니다.`);
-        // 실제 구현에서는 여기서 FormData를 사용해 multipart/form-data로 서버에 전송
-        const formData = new FormData();
         let taskIds = [];
+        let promises = [];
 
         for (let i = 0; i < files.length; i++) {
             const fileName = files[i].name;
@@ -179,25 +182,37 @@ async function handleFiles(files) {
             taskIds.push(taskId);
 
             addTask(taskId, fileName.length > taskNameDisplayLen ? fileName.slice(0, taskNameDisplayLen) + "..." : fileName);
-            if (files[i].fileSize > 13 << 19) {
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            const taskId = taskIds[i];
+            const file = files[i];
+
+            if (file.fileSize > 13 << 19) {
                 // The image is too big (>= 7.5MB)
                 updateTaskStatus(taskId, "error", "파일이 너무 큽니다.");
+                promises.push(Promise.reject(null));
                 continue;
             }
 
-            console.log(files[i]);
-            formData.append("files", files[i]); // files가 key
+            const formData = new FormData();
+            formData.append("files", file); // files가 key
+
+            updateTaskStatus(taskId, "processing");
+            promises.push(
+                apiPostFile("/api/images", formData)
+                    .then((result) => {
+                        updateTaskStatus(taskId, "done");
+                        return result;
+                    })
+                    .catch((error) => {
+                        updateTaskStatus(taskId, "error", "통신 에러 : " + error);
+                        return Promise.reject(null);
+                    })
+            );
         }
 
-        const promise = apiPostFile("/api/images", formData);
-        taskIds.forEach((id_) => updateTaskStatus(id_, "processing"));
-        try {
-            const results = await promise;
-            taskIds.forEach((id_) => updateTaskStatus(id_, "done"));
-            return results;
-        } catch (error) {
-            taskIds.forEach((id_) => updateTaskStatus(id_, "error", "통신 에러 : " + error));
-        }
+        return await Promise.all(promises);
     }
 }
 
