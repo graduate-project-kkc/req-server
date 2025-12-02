@@ -206,7 +206,7 @@ async function handleFiles(files) {
                         return result;
                     })
                     .catch((error) => {
-                        updateTaskStatus(taskId, "error", "통신 에러 : " + error);
+                        updateTaskStatus(taskId, "error", "통신 에러 : " + error.status || error.message);
                         return Promise.reject(null);
                     })
             );
@@ -265,7 +265,7 @@ async function performSearch(img_file) {
             updateTaskStatus(taskId, "done");
             document.getElementById("searchMessage").textContent = "업로드한 사진의 검색 결과";
         } catch (error) {
-            updateTaskStatus(taskId, "error", "서버 통신 오류 : " + error);
+            updateTaskStatus(taskId, "error", "Internal Server Error : " + error.status || error.message);
         }
     } else if (query) {
         // Find matching results
@@ -275,7 +275,7 @@ async function performSearch(img_file) {
             updateTaskStatus(taskId, "done");
             document.getElementById("searchMessage").textContent = "검색 결과 : " + results.query;
         } catch (error) {
-            updateTaskStatus(taskId, "error", "서버 통신 오류 : " + error);
+            updateTaskStatus(taskId, "error", "Internal Server Error : " + error.status || error.message);
         }
     } else {
         // Show default photos
@@ -325,7 +325,7 @@ async function loadPhotoStats() {
         document.getElementById("photoCount").textContent = stats.fileCount.toLocaleString();
         document.getElementById("totalSize").textContent = stats.fileSize;
     } catch (error) {
-        console.error("사진 통계 오류:", error);
+        console.error("사진 통계 오류 : " + (error.status || error.message));
         document.getElementById("photoCount").textContent = "N/A";
         document.getElementById("totalSize").textContent = "N/A";
     }
@@ -352,11 +352,32 @@ function getLoginFormData() {
 }
 
 async function handleLogin(e) {
-    const result = await apiPost("/api/users/login", JSON.stringify(getLoginFormData()));
-    localStorage.setItem("accessToken", result.accessToken);
-    localStorage.setItem("username", result.username);
-    updateLoginState();
-    closeLoginModal();
+    try {
+        let loginBtn = document.getElementById("loginBtn");
+        let loginMessage = document.getElementById("loginMessage");
+
+        loginBtn.disabled = true;
+        loginBtn.classList.remove("primary");
+
+        const result = await apiPost("/api/users/login", JSON.stringify(getLoginFormData()));
+        localStorage.setItem("accessToken", result.accessToken);
+        localStorage.setItem("username", result.username);
+        updateLoginState();
+        closeLoginModal();
+        loginMessage.hidden = true;
+    } catch (error) {
+        if (error.status === 404) {
+            loginMessage.textContent = "로그인 정보가 일치하지 않습니다.";
+            loginMessage.hidden = false;
+        } else {
+            loginMessage.textContent = "Internal Server Error";
+            loginMessage.hidden = false;
+            console.error("로그인 오류:", error.status || error.message);
+        }
+    } finally {
+        loginBtn.disabled = false;
+        loginBtn.classList.add("primary");
+    }
 }
 
 function updateLoginButtonState(e) {
@@ -449,7 +470,7 @@ async function sendEmailVerification() {
     } catch (e) {
         sendCodeButton.innerHTML = "오류. 다시 시도";
         sendCodeButton.disabled = false;
-        console.log(e);
+        console.error("이메일 인증 오류 : " + (e.status || e.message));
         return;
     }
 
@@ -478,7 +499,7 @@ async function handleSignUp() {
         const result = await apiPost("/api/users/signup", JSON.stringify(getSignUpFormData()));
         success = true;
     } catch (e) {
-        console.log(e);
+        console.error("회원가입 오류 : " + (e.status || e.message));
         success = false;
     }
 

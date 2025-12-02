@@ -1,5 +1,13 @@
 const API_BASE_URL = "http://52.79.227.178:8080";
 
+class APIError extends Error {
+    constructor(message, endpoint, status) {
+        super(message + " " + endpoint + " " + status);
+        this.endpoint = endpoint;
+        this.status = status;
+    }
+}
+
 // 공통 fetch wrapper
 async function apiGet(endpoint) {
     let init = {
@@ -11,7 +19,7 @@ async function apiGet(endpoint) {
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, init);
     if (!response.ok) {
-        throw new Error(`GET ${endpoint} 실패`);
+        throw new APIError(`GET`, endpoint, response.status);
     }
     const contentType = response.headers.get("Content-type");
     if (contentType && contentType.includes("application/json")) {
@@ -33,7 +41,7 @@ async function apiPost(endpoint, data) {
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, init);
     if (!response.ok) {
-        throw new Error(`POST ${endpoint} 실패`);
+        throw new APIError(`POST`, endpoint, response.status);
     }
     const contentType = response.headers.get("Content-type");
     if (contentType && contentType.includes("application/json")) {
@@ -54,7 +62,7 @@ async function apiPostFile(endpoint, data) {
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, init);
     if (!response.ok) {
-        throw new Error(`POST ${endpoint} 실패`);
+        throw new APIError(`POST`, endpoint, response.status);
     }
     const contentType = response.headers.get("Content-type");
     if (contentType && contentType.includes("application/json")) {
