@@ -220,6 +220,8 @@ async function handleSearchFiles(files) {
     }
 }
 
+let recentSearchPhotos = {};
+
 // Search functionality
 async function performSearch(img_file) {
     const query = document.getElementById("searchInput").value.trim().toLowerCase();
@@ -268,15 +270,18 @@ async function performSearch(img_file) {
 
     // Display results
     if (results.photos.length > 0) {
+        recentSearchPhotos = results.photos.reduce((acc, photo) => {
+            acc[photo.url] = photo;
+            return acc;
+        }, {});
         const photosHtml = results.photos
             .map(
-                (photos) => `
+                (photo) => `
             <div class="photo-card">
-                <img class="photo-img" src=${photos.url} alt="photo">
+                <img class="photo-img" src=${photo.url} alt="photo">
                 <div class="photo-info">
-                    <div class="photo-title">${photos.url.split("/").pop()}</div> 
-                    <div class="photo-meta">유사도: ${(customScore(photos.score) * 100).toFixed(2)}%</div> 
-                    <div class="photo-meta">용량: ${photos.size}MB</div>
+                    <div class="photo-title">${photo.originalFilename}</div> 
+                    <div class="photo-meta">유사도: ${(customScore(photo.score) * 100).toFixed(2)}%</div> 
                 </div>
             </div>
         `
@@ -651,24 +656,38 @@ contextMenu.addEventListener("click", async function (e) {
 /* View Modal Logic */
 const viewModal = document.getElementById("viewModal");
 const viewModalImg = document.getElementById("viewModalImg");
-const viewModalTitle = document.getElementById("viewModalTitle");
-const viewModalMeta = document.getElementById("viewModalMeta");
+const viewModalInfo = document.getElementById("viewModalInfo");
 
 function openViewModal(card) {
     const img = card.querySelector("img");
     if (!img) return; // Should not happen based on requirements, but safety check
 
-    const title = card.querySelector(".photo-title")?.innerText || "No Title";
-    // Collect all meta info
-    const metaDivs = card.querySelectorAll(".photo-meta");
-    let metaHtml = "";
-    metaDivs.forEach((div) => {
-        metaHtml += `<div>${div.innerText}</div>`;
-    });
+    const photo = recentSearchPhotos[img.src];
+    if (!photo) return;
 
     viewModalImg.src = img.src;
-    viewModalTitle.innerText = title;
-    viewModalMeta.innerHTML = metaHtml;
+    viewModalInfo.innerHTML = `
+    <div class="photo-info">
+        <div class="photo-subtitle">파일 이름</div>
+        <div class="photo-meta">${photo.originalFilename}</div>
+    </div>
+    <div class="photo-info">
+        <div class="photo-subtitle">유사도</div>
+        <div class="photo-meta">${(customScore(photo.score) * 100).toFixed(2)}%</div>
+    </div>
+    <div class="photo-info">
+        <div class="photo-subtitle">해상도</div>
+        <div class="photo-meta">${img.width} x ${img.height}</div>
+    </div>
+    <div class="photo-info">
+        <div class="photo-subtitle">크기</div>
+        <div class="photo-meta">${photo.size}MB</div>
+    </div>
+    <div class="photo-info">
+        <div class="photo-subtitle">올린 날짜</div>
+        <div class="photo-meta">${photo.takenDate}</div>
+    </div>
+    `;
 
     viewModal.classList.add("active");
 }
