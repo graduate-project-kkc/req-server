@@ -39,6 +39,11 @@ public class SearchService {
         String query = translationService.translate(request.getQuery(), "auto", "en");
         log.info("translation result: {}", query);
 
+        if (query.trim().split("\\s+").length == 1) {
+            query = "a photo of " + query;
+            log.info("modified query: {}", query);
+        }
+
         List<Float> vector = aiClient.textToVector(query);
         return getSearchResponse(userId, vector, query);
     }
