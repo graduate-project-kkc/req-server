@@ -26,6 +26,9 @@ public class MetadataExtractorUtil {
                 if (date != null) {
                     return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
                 }
+
+                // 촬영날짜 추출 실패 시 업로드 날짜로 대체
+                return LocalDateTime.now();
             }
         } catch (Exception e) {
             log.warn("Failed to extract metadata from file: {}", file.getOriginalFilename(), e);
