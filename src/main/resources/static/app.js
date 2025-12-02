@@ -411,6 +411,7 @@ function updateLoginState() {
 function logout() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("username");
+    switchTab("upload");
     updateLoginState();
 }
 
@@ -570,51 +571,9 @@ function renderDefaultPhtos() {
     return `
             <div class="photo-grid" id="defaultPhotos">
                 <div class="photo-card">
-                    <div class="photo-img">🏔️</div>
+                    <div class="photo-img">📸</div>
                     <div class="photo-info">
-                        <div class="photo-title">산악 풍경</div>
-                        <div class="photo-meta">크기: 2.1MB</div>
-                        <div class="photo-meta">업로드: 2024-01-15</div>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <div class="photo-img">🌊</div>
-                    <div class="photo-info">
-                        <div class="photo-title">바다 풍경</div>
-                        <div class="photo-meta">크기: 1.8MB</div>
-                        <div class="photo-meta">업로드: 2024-01-14</div>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <div class="photo-img">🌸</div>
-                    <div class="photo-info">
-                        <div class="photo-title">벚꽃 축제</div>
-                        <div class="photo-meta">크기: 3.2MB</div>
-                        <div class="photo-meta">업로드: 2024-01-13</div>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <div class="photo-img">🐕</div>
-                    <div class="photo-info">
-                        <div class="photo-title">강아지 산책</div>
-                        <div class="photo-meta">크기: 1.5MB</div>
-                        <div class="photo-meta">업로드: 2024-01-12</div>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <div class="photo-img">🌆</div>
-                    <div class="photo-info">
-                        <div class="photo-title">도시 야경</div>
-                        <div class="photo-meta">크기: 2.7MB</div>
-                        <div class="photo-meta">업로드: 2024-01-11</div>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <div class="photo-img">🍕</div>
-                    <div class="photo-info">
-                        <div class="photo-title">맛있는 피자</div>
-                        <div class="photo-meta">크기: 1.9MB</div>
-                        <div class="photo-meta">업로드: 2024-01-10</div>
+                        <div class="photo-title">로그인하세요!</div>
                     </div>
                 </div>
             </div>
@@ -702,7 +661,10 @@ function openViewModal(card) {
     if (!photo) return;
 
     viewModalImg.src = img.src;
-    viewModalInfo.innerHTML = `
+    viewModalImg.alt = photo.originalFilename;
+    viewModalInfo.innerHTML = "<div class='photo-meta'>로딩 중...</div>";
+    viewModalImg.onload = () => {
+        viewModalInfo.innerHTML = `
     <div class="photo-info">
         <div class="photo-subtitle">파일 이름</div>
         <div class="photo-meta">${photo.originalFilename}</div>
@@ -713,7 +675,7 @@ function openViewModal(card) {
     </div>
     <div class="photo-info">
         <div class="photo-subtitle">해상도</div>
-        <div class="photo-meta">${img.width} x ${img.height}</div>
+        <div class="photo-meta">${viewModalImg.naturalWidth} x ${viewModalImg.naturalHeight}</div>
     </div>
     <div class="photo-info">
         <div class="photo-subtitle">크기</div>
@@ -724,7 +686,7 @@ function openViewModal(card) {
         <div class="photo-meta">${photo.takenDate}</div>
     </div>
     `;
-
+    };
     viewModal.classList.add("active");
 }
 
