@@ -321,6 +321,12 @@ body {
     text-align: center;
 }
 
+.login-message {
+    color: red;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
 .form-group {
     margin-bottom: 1rem;
 }
