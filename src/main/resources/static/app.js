@@ -637,7 +637,7 @@ contextMenu.addEventListener("click", async function (e) {
             const tempLink = document.createElement("a");
             tempLink.style.display = "none";
             tempLink.href = img_src;
-            tempLink.download = imgId;
+            tempLink.download = recentSearchPhotos[img_src].originalFilename;
             document.body.appendChild(tempLink);
             tempLink.click();
             document.body.removeChild(tempLink);
