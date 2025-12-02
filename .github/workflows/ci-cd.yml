@@ -75,7 +75,7 @@ jobs:
               -e DD_ENV=prod \
               -e DD_LOGS_INJECTION=true \
               -e DD_PROFILING_ENABLED=true \
-              -e DD_INTEGRATION_NETTY_ENABLED=false \  # <--- 여기 추가!
+              -e DD_INTEGRATION_NETTY_ENABLED=false \
               -e DD_VERSION=${{ github.sha }} \
               --env-file /home/${{ secrets.EC2_USER }}/bzun.env \
               ${{ secrets.DOCKERHUB_USERNAME }}/graduate:latest
