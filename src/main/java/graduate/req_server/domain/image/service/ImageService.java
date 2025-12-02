@@ -62,7 +62,7 @@ public class ImageService {
                 .orElseThrow(() -> new CustomException(ErrorCode.IMAGE_NOT_FOUND));
 
         s3Service.deleteFile(photo.getS3Key());
-        pineconeClient.deleteVector(photo.getS3Key());
+        pineconeClient.deleteVector(photo.getS3Key(), SecurityUtil.getCurrentUserId());
 
         photoRepository.delete(photo);
     }
