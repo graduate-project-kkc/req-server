@@ -12,13 +12,14 @@
 
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="nav-left">
-            <div class="logo">📸 Photo Search</div>
+        <div class="nav-group">
+            <img src="logo-icon.png" alt="Logo" style="width: 50px; height: 50px;">
+            <div class="logo">그때 그 사진...</div>
         </div>
-        <div id="loginBtnContainer" class="nav-right">
+        <div id="loginBtnContainer" class="nav-group">
             <button class="login-btn" onclick="openLoginModal()">로그인</button>
         </div>
-        <div id="logoutBtnContainer" class="nav-right" style="display: none;">
+        <div id="logoutBtnContainer" class="nav-group" style="display: none;">
             <div class="username" id="username">이스터에그</div>
             <button class="login-btn" onclick="logout()">로그아웃</button>
         </div>
@@ -82,62 +83,8 @@
                 </div>
             </div>
 
-            <div id="searchMessage" class="search-message"></div>
-
             <!-- Search Results -->
-            <div id="searchResults">
-                <!-- Default Photos Grid -->
-                <div class="photo-grid" id="defaultPhotos">
-                    <div class="photo-card">
-                        <div class="photo-img">🏔️</div>
-                        <div class="photo-info">
-                            <div class="photo-title">산악 풍경</div>
-                            <div class="photo-meta">크기: 2.1MB</div>
-                            <div class="photo-meta">업로드: 2024-01-15</div>
-                        </div>
-                    </div>
-                    <div class="photo-card">
-                        <div class="photo-img">🌊</div>
-                        <div class="photo-info">
-                            <div class="photo-title">바다 풍경</div>
-                            <div class="photo-meta">크기: 1.8MB</div>
-                            <div class="photo-meta">업로드: 2024-01-14</div>
-                        </div>
-                    </div>
-                    <div class="photo-card">
-                        <div class="photo-img">🌸</div>
-                        <div class="photo-info">
-                            <div class="photo-title">벚꽃 축제</div>
-                            <div class="photo-meta">크기: 3.2MB</div>
-                            <div class="photo-meta">업로드: 2024-01-13</div>
-                        </div>
-                    </div>
-                    <div class="photo-card">
-                        <div class="photo-img">🐕</div>
-                        <div class="photo-info">
-                            <div class="photo-title">강아지 산책</div>
-                            <div class="photo-meta">크기: 1.5MB</div>
-                            <div class="photo-meta">업로드: 2024-01-12</div>
-                        </div>
-                    </div>
-                    <div class="photo-card">
-                        <div class="photo-img">🌆</div>
-                        <div class="photo-info">
-                            <div class="photo-title">도시 야경</div>
-                            <div class="photo-meta">크기: 2.7MB</div>
-                            <div class="photo-meta">업로드: 2024-01-11</div>
-                        </div>
-                    </div>
-                    <div class="photo-card">
-                        <div class="photo-img">🍕</div>
-                        <div class="photo-info">
-                            <div class="photo-title">맛있는 피자</div>
-                            <div class="photo-meta">크기: 1.9MB</div>
-                            <div class="photo-meta">업로드: 2024-01-10</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="searchResults"></div>
         </div>
     </div>
 
