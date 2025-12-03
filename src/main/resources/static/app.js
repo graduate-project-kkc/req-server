@@ -75,8 +75,8 @@ function renderTasks() {
         status.innerText = capitalize(t.status);
 
         status.addEventListener("mousemove", (e) => {
-            tooltip.style.right = window.innerWidth - e.pageX + 10 + "px"; // Adjust offset as needed
-            tooltip.style.bottom = window.innerHeight - e.pageY + "px"; // Adjust offset as needed
+            tooltip.style.right = window.innerWidth - e.clientX + "px"; // Adjust offset as needed
+            tooltip.style.bottom = window.innerHeight - e.clientY + "px"; // Adjust offset as needed
         });
 
         status.addEventListener("mouseenter", () => {
@@ -144,6 +144,7 @@ function switchTab(tab) {
     if (tab === "search") {
         console.log("loadPhothoStatus");
         loadPhotoStats(); // 통계 API 요청
+        performSearch();
     }
 }
 
@@ -206,7 +207,11 @@ async function handleFiles(files) {
                         return result;
                     })
                     .catch((error) => {
-                        updateTaskStatus(taskId, "error", "통신 에러 : " + error.status || error.message);
+                        if (error.status === 403) {
+                            updateTaskStatus(taskId, "error", "로그인이 필요합니다!");
+                        } else {
+                            updateTaskStatus(taskId, "error", "통신 에러 : " + (error.status || error.message));
+                        }
                         return Promise.reject(null);
                     })
             );
@@ -242,6 +247,7 @@ async function performSearch(img_file) {
     const query = document.getElementById("searchInput").value.trim().toLowerCase();
     const resultsContainer = document.getElementById("searchResults");
     let results = null;
+    let searchMessage = null;
     const taskId = "task-" + taskGlobalId++;
 
     if (img_file) {
@@ -263,9 +269,14 @@ async function performSearch(img_file) {
         try {
             results = await apiPostFile("/api/search/image", formData);
             updateTaskStatus(taskId, "done");
-            document.getElementById("searchMessage").textContent = "업로드한 사진의 검색 결과";
+            searchMessage = "업로드한 사진의 검색 결과";
         } catch (error) {
-            updateTaskStatus(taskId, "error", "Internal Server Error : " + error.status || error.message);
+            if (error.status === 403) {
+                updateTaskStatus(taskId, "error", "로그인이 필요합니다!");
+            } else {
+                updateTaskStatus(taskId, "error", "Internal Server Error : " + (error.status || error.message));
+            }
+            return;
         }
     } else if (query) {
         // Find matching results
@@ -273,9 +284,14 @@ async function performSearch(img_file) {
         try {
             results = await apiGet("/api/search/text?query=" + query);
             updateTaskStatus(taskId, "done");
-            document.getElementById("searchMessage").textContent = "검색 결과 : " + results.query;
+            searchMessage = `\"${results.query}\"검색 결과`;
         } catch (error) {
-            updateTaskStatus(taskId, "error", "Internal Server Error : " + error.status || error.message);
+            if (error.status === 403) {
+                updateTaskStatus(taskId, "error", "로그인이 필요합니다!");
+            } else {
+                updateTaskStatus(taskId, "error", "Internal Server Error : " + (error.status || error.message));
+            }
+            return;
         }
     } else {
         // Show default photos
@@ -305,7 +321,7 @@ async function performSearch(img_file) {
 
         resultsContainer.innerHTML = `
             <div style="margin-bottom: 1rem; color: #64748b;">
-                "${query}" 검색 결과: ${results.photos.length}개
+                ${searchMessage}: ${results.photos.length}개
             </div>
             <div class="photo-grid">${photosHtml}</div>
         `;
@@ -320,6 +336,9 @@ async function performSearch(img_file) {
 
 async function loadPhotoStats() {
     try {
+        document.getElementById("photoCount").textContent = "로딩 중...";
+        document.getElementById("totalSize").textContent = "로딩 중...";
+
         const stats = await apiGet("/api/status"); // { photoCount: 1247, totalSize: "2.4GB" }
 
         document.getElementById("photoCount").textContent = stats.fileCount.toLocaleString();
@@ -568,6 +587,18 @@ document.getElementById("searchInput").addEventListener("keypress", function (e)
 });
 
 function renderDefaultPhtos() {
+    if (localStorage.getItem("accessToken")) {
+        return `
+            <div class="photo-grid" id="defaultPhotos">
+                <div class="photo-card">
+                    <div class="photo-img">📸</div>
+                    <div class="photo-info">
+                        <div class="photo-title">검색하세요!</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
     return `
             <div class="photo-grid" id="defaultPhotos">
                 <div class="photo-card">
@@ -650,6 +681,10 @@ contextMenu.addEventListener("click", async function (e) {
                 delete recentSearchPhotos[img_src];
                 const card = contextTarget.closest(".photo-card");
                 card.remove();
+                loadPhotoStats();
+            } else {
+                console.error("사진 삭제 실패 : " + response.status);
+                console.error(response);
             }
         }
     } catch (e) {
