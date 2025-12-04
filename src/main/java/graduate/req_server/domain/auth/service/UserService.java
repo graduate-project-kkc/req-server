@@ -31,6 +31,7 @@ public class UserService {
     private final EmailVerificationRepository emailVerificationRepository;
 
     private static final long EMAIL_VERIFICATION_EXPIRY_MINUTES = 5;
+    private static final Random RANDOM = new Random();
 
     @Value("${app.service-url}")
     private String serviceUrl;
@@ -94,8 +95,7 @@ public class UserService {
     }
 
     private String createVerificationCode() {
-        Random random = new Random();
-        int code = 100000 + random.nextInt(900000);
+        int code = 100000 + RANDOM.nextInt(900000);
         return String.valueOf(code);
     }
 }
