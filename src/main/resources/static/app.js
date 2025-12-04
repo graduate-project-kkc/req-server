@@ -1,9 +1,8 @@
 function customScore(v) {
-    let sigmoid = (x) => 1 / (1 + Math.exp(-x));
-    const amplifier = 5;
-    const scoreMin = sigmoid(-amplifier);
-    const scoreMax = sigmoid(amplifier);
-    return (sigmoid(v * amplifier) - scoreMin) / (scoreMax - scoreMin);
+    let custom_sigmoid = (x) => 1 / (1 + Math.exp(-(x - 0.2) * 16));
+    const scoreMin = custom_sigmoid(-1);
+    const scoreMax = custom_sigmoid(1);
+    return (custom_sigmoid(v) - scoreMin) / (scoreMax - scoreMin);
 }
 
 let tasks = {};
@@ -693,7 +692,6 @@ function openViewModal(card) {
     const photo = recentSearchPhotos[img.src];
     if (!photo) return;
 
-    viewModalImg.src = img.src;
     viewModalImg.alt = photo.originalFilename;
     viewModalInfo.innerHTML = "<div class='photo-meta'>로딩 중...</div>";
     viewModalImg.onload = () => {
@@ -721,6 +719,7 @@ function openViewModal(card) {
     `;
     };
     viewModal.classList.add("active");
+    viewModalImg.src = img.src;
 }
 
 function closeViewModal() {
