@@ -1,20 +1,3 @@
-// Sample search results data
-const searchResultsData = {
-    "강아지": [
-        { title: "강아지 산책", emoji: "🐕", size: "1.5MB", date: "2024-01-12" },
-        { title: "해변의 강아지", emoji: "🐕‍🦺", size: "2.1MB", date: "2024-01-08" },
-    ],
-    "바다": [
-        { title: "바다 풍경", emoji: "🌊", size: "1.8MB", date: "2024-01-14" },
-        { title: "해변의 강아지", emoji: "🐕‍🦺", size: "2.1MB", date: "2024-01-08" },
-        { title: "일몰 바다", emoji: "🌅", size: "2.9MB", date: "2024-01-05" },
-    ],
-    "음식": [
-        { title: "맛있는 피자", emoji: "🍕", size: "1.9MB", date: "2024-01-10" },
-        { title: "스시 세트", emoji: "🍣", size: "2.3MB", date: "2024-01-07" },
-    ],
-};
-
 function customScore(v) {
     let sigmoid = (x) => 1 / (1 + Math.exp(-x));
     const amplifier = 5;
@@ -144,6 +127,8 @@ function switchTab(tab) {
     if (tab === "search") {
         console.log("loadPhothoStatus");
         loadPhotoStats(); // 통계 API 요청
+        document.getElementById("searchInput").value = "";
+        document.getElementById("searchFileInput").value = "";
         performSearch();
     }
 }
@@ -155,7 +140,9 @@ function handleDragOver(e) {
 }
 
 function handleDragLeave(e) {
-    e.currentTarget.classList.remove("dragover");
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+        e.currentTarget.classList.remove("dragover");
+    }
 }
 
 const taskNameDisplayLen = 15;
