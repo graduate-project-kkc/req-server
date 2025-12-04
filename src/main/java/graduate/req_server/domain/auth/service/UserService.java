@@ -15,6 +15,7 @@ import graduate.req_server.util.mail.EmailService;
 import java.time.LocalDateTime;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,9 @@ public class UserService {
     private final EmailVerificationRepository emailVerificationRepository;
 
     private static final long EMAIL_VERIFICATION_EXPIRY_MINUTES = 5;
+
+    @Value("${app.service-url}")
+    private String serviceUrl;
 
     @Transactional
     public void sendVerificationEmail(EmailVerificationRequest request) {
@@ -48,7 +52,9 @@ public class UserService {
         verification.updateVerificationInfo(verificationCode, expiryTime);
 
         emailVerificationRepository.save(verification);
-        emailService.sendEmail(email, "회원가입 인증번호", "인증번호: " + verificationCode);
+
+        String body = "인증번호: " + verificationCode + "\n\n" + "서비스 바로가기: " + serviceUrl;
+        emailService.sendEmail(email, "회원가입 인증번호", body);
     }
 
     @Transactional

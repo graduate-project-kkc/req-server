@@ -34,6 +34,9 @@ spring:
           starttls:
             enable: true
 
+app:
+  service-url: ${SERVICE_URL}
+
 # AI
 ai:
   server:
