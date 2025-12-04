@@ -372,7 +372,7 @@ async function handleLogin(e) {
         closeLoginModal();
         loginMessage.hidden = true;
     } catch (error) {
-        if (error.status === 404) {
+        if (error.status === 401 || error.status === 404) {
             loginMessage.textContent = "로그인 정보가 일치하지 않습니다.";
             loginMessage.hidden = false;
         } else {
