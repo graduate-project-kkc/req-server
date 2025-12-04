@@ -176,7 +176,7 @@ async function handleFiles(files) {
             const taskId = taskIds[i];
             const file = files[i];
 
-            if (file.fileSize > 13 << 19) {
+            if (file.size > 13 << 19) {
                 // The image is too big (>= 7.5MB)
                 updateTaskStatus(taskId, "error", "파일이 너무 큽니다.");
                 promises.push(Promise.reject(null));
@@ -243,7 +243,7 @@ async function performSearch(img_file) {
         const fileName = img_file.name;
 
         addTask(taskId, "검색 : " + (fileName.length > taskNameDisplayLen ? fileName.slice(0, taskNameDisplayLen) + "..." : fileName));
-        if (img_file.fileSize > 13 << 19) {
+        if (img_file.size > 13 << 19) {
             // The image is too big (>= 7.5MB)
             updateTaskStatus(taskId, "error", "파일이 너무 큽니다.");
             return;
