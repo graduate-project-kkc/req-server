@@ -270,7 +270,7 @@ async function performSearch(img_file) {
         try {
             results = await apiGet("/api/search/text?query=" + query);
             updateTaskStatus(taskId, "done");
-            searchMessage = `\"${results.query}\"검색 결과`;
+            searchMessage = `\"${results.query}\" 검색 결과`;
         } catch (error) {
             if (error.status === 403) {
                 updateTaskStatus(taskId, "error", "로그인이 필요합니다!");
